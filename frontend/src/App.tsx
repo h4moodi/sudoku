@@ -273,14 +273,7 @@ export default function App() {
               // Play friendly, soft retro mistake beep
               playMistakeSound();
 
-              setMistakes(m => {
-                const updatedMistakes = m + 1;
-                if (updatedMistakes >= 5) {
-                  setOverlayStatus('gameover');
-                  pauseTimer();
-                }
-                return updatedMistakes;
-              });
+              setMistakes(m => m + 1);
             } else {
               // Play elegant success plunk chime
               playPlacementSound(false);
@@ -551,7 +544,7 @@ export default function App() {
             </div>
             <ul className="text-[10px] text-neon-muted space-y-2 list-none font-sans leading-relaxed">
               <li>• Every column, row, and 3x3 block must hold numbers <strong className="text-white">1-9</strong>.</li>
-              <li>• Max <strong className="text-neon-pink">5 mistakes</strong> allowed before lockout.</li>
+              <li>• Relaxed mode: <strong className="text-neon-pink">Infinite lives</strong> enabled.</li>
               <li>• Use <strong className="text-neon-cyan">Notes</strong> mode to coordinate drafts on tricky squares.</li>
               <li>• Keyboard binds enabled (1-9 to input, Arrow keys to navigate!).</li>
             </ul>
@@ -600,10 +593,10 @@ export default function App() {
             {/* Mistakes tracking */}
             <div className="text-right flex flex-col justify-center items-end">
               <span className="text-[9px] sm:text-[10px] text-neon-muted font-bold tracking-widest uppercase mb-1">
-                MISTAKES
+                LIVES
               </span>
-              <span className={`text-xs sm:text-sm tracking-widest font-bold ${mistakes > 0 ? 'text-neon-pink animate-pulse' : 'text-white'}`}>
-                {mistakes}/5
+              <span className="text-xs sm:text-sm tracking-widest font-bold text-neon-cyan animate-pulse">
+                ∞
               </span>
             </div>
           </div>

@@ -147,8 +147,8 @@ export default function RankingList({
                     <p className="font-mono text-xs text-neon-green-glow font-bold">
                       {formatTime(run.timeSec)}
                     </p>
-                    <p className="text-[9px] text-[#aa888f]">
-                      Mistakes: {run.mistakes}/5
+                    <p className="text-[9px] text-neon-cyan/70 font-mono">
+                      Solved successfully!
                     </p>
                   </div>
                 </div>
