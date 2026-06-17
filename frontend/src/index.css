@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Neon Pulse Colors */
+  --color-neon-bg: #15121a;
+  --color-neon-surface: #1e1a23;
+  --color-neon-surface-high: #2c2832;
+  --color-neon-pink: #ff4a8e;
+  --color-neon-pink-glow: #ffb1c5;
+  --color-neon-green: #2ff801;
+  --color-neon-green-glow: #79ff5b;
+  --color-neon-cyan: #00dbe9;
+  --color-neon-purple: #8f0045;
+  --color-neon-text: #e8e0ed;
+  --color-neon-muted: #aa888f;
+}
+
+/* Animations and extra glows */
+@utility glow-pink {
+  box-shadow: 0 0 15px rgba(255, 74, 142, 0.6);
+  border-color: #ff4a8e;
+}
+
+@utility glow-pink-sm {
+  box-shadow: 0 0 8px rgba(255, 74, 142, 0.4);
+}
+
+@utility glow-green {
+  box-shadow: 0 0 20px rgba(47, 248, 1, 0.85);
+  border-color: #2ff801;
+}
+
+@utility text-glow-pink {
+  text-shadow: 0 0 6px rgba(255, 74, 142, 0.8);
+}
+
+@utility text-glow-green {
+  text-shadow: 0 0 6px rgba(47, 248, 1, 0.8);
+}
+
+/* Fade-in animation used by GameOverlay */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Scrollbar styles to match Neon Pulse vibe */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #15121a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2c2832;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff4a8e;
+}

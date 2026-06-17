@@ -1,0 +1,35 @@
+# Ruby / Sinatra
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+.env
+log/
+tmp/
+*.sqlite3
+sudoku.db
+backend/sudoku.db
+
+# Node / Vite frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Kalle's zip backup (don't commit)
+*.zip

@@ -1,0 +1,6 @@
+{
+  "name": "Kalle's Sudoku",
+  "description": "An intense neon-infused competitive Sudoku puzzle game with global rankings, hint systems, and multiple difficulty levels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
