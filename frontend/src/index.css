@@ -48,6 +48,10 @@
   text-shadow: 0 0 6px rgba(47, 248, 1, 0.8);
 }
 
+@utility text-glow-blue {
+  text-shadow: 0 0 6px rgba(0, 162, 255, 0.8);
+}
+
 /* Fade-in animation used by GameOverlay */
 @keyframes fadeIn {
   from {

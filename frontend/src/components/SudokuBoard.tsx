@@ -94,7 +94,9 @@ export default function SudokuBoard({
             let textStyle = 'text-white';
             const isCompleted = cell && cell.value !== 0 && completedNumbers.includes(cell.value) && !cell.isError;
 
-            if (isCompleted) {
+            if (cell?.isRevealed) {
+              textStyle = 'text-[#00a2ff] font-extrabold font-sora text-glow-blue drop-shadow-[0_0_6px_#00a2ff]';
+            } else if (isCompleted) {
               textStyle = 'text-neon-green font-extrabold font-sora text-glow-green drop-shadow-[0_0_6px_#2ff801]';
             } else if (cell?.isInitial) {
               textStyle = 'text-white font-bold font-sora';

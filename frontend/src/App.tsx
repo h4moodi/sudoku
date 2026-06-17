@@ -170,6 +170,11 @@ export default function App() {
     return counts;
   }, [cells]);
 
+  // Derived state to check if board is fully solved
+  const isBoardSolved = useMemo(() => {
+    return cells.length > 0 && cells.every(c => c.value !== 0 && c.value === c.correctValue);
+  }, [cells]);
+
   // Check board victory condition — wrapped in useCallback to avoid stale closure when called from handleCellInput
   const checkVictory = useCallback((currentCells: SudokuCell[]) => {
     const allFilled = currentCells.every(c => c.value !== 0 && c.value === c.correctValue);
@@ -347,7 +352,7 @@ export default function App() {
     if (window.confirm("Are you sure you want to clear all your entries and reset the board?")) {
       setCells(prev => prev.map(c => {
         if (!c.isInitial) {
-          return { ...c, value: 0, isError: false, notes: [] };
+          return { ...c, value: 0, isError: false, isRevealed: false, notes: [] };
         }
         return c;
       }));
@@ -403,6 +408,7 @@ export default function App() {
           ...c,
           value: c.correctValue,
           isError: false,
+          isRevealed: c.value !== c.correctValue,
           notes: []
         }));
         setTimeout(() => checkVictory(solved), 100);
@@ -644,6 +650,18 @@ export default function App() {
               highlightNumber={activeNumber}
             />
 
+            {isBoardSolved && overlayStatus === null && (
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-[#1e1a23]/95 border border-[#2ff801]/40 rounded-full px-4 py-2.5 flex items-center gap-3 shadow-[0_0_15px_rgba(47,248,1,0.35)] animate-pulse font-mono text-[10px] sm:text-xs">
+                <span className="text-[#2ff801] font-bold tracking-wider">🏆 GRID COMPLETE!</span>
+                <button
+                  onClick={() => setOverlayStatus('victory')}
+                  className="bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold px-3 py-1 rounded-full text-[9px] sm:text-[10px] transition-all whitespace-nowrap cursor-pointer"
+                >
+                  REOPEN RESULTS
+                </button>
+              </div>
+            )}
+
             {/* In-Play Overlay State Controller */}
             <GameOverlay
               status={overlayStatus}
@@ -663,6 +681,7 @@ export default function App() {
                 initGame(diff);
               }}
               onSubmitScore={handleLeaderboardSubmit}
+              onDismiss={() => setOverlayStatus(null)}
             />
           </div>
 

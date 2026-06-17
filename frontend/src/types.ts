@@ -8,6 +8,7 @@ export interface SudokuCell {
   isInitial: boolean;  // True if given from start
   isError: boolean;    // True if user value is wrong
   notes: number[];     // Pencil marks (1-9)
+  isRevealed?: boolean; // True if revealed by Show Solution (rendered in blue)
 }
 
 export interface HardcodedRank {

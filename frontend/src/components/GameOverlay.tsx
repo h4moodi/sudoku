@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, Play, Trophy, AlertTriangle, Sparkles, Smile, Coffee } from 'lucide-react';
+import { RefreshCw, Play, Trophy, AlertTriangle, Sparkles, Smile, Coffee, Eye } from 'lucide-react';
 import { Difficulty } from '../types';
 
 interface GameOverlayProps {
@@ -9,6 +9,7 @@ interface GameOverlayProps {
   onAction: () => void; // Resume, Restart, or Start Game
   onChangeDifficulty?: (diff: Difficulty) => void;
   onSubmitScore?: (name: string) => void;
+  onDismiss?: () => void; // New callback to close victory overlay and inspect solved board
 }
 
 export default function GameOverlay({
@@ -18,6 +19,7 @@ export default function GameOverlay({
   onAction,
   onChangeDifficulty,
   onSubmitScore,
+  onDismiss,
 }: GameOverlayProps) {
   const [userName, setUserName] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
@@ -216,14 +218,28 @@ export default function GameOverlay({
               </div>
             )}
 
-            <button
-              id="victory-new-game"
-              onClick={onAction}
-              className="w-full bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2.5 sm:py-3 px-6 rounded-lg transition-all duration-150 flex items-center justify-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              NEW MATRIX CHALLENGE
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full pt-2">
+              {onDismiss && (
+                <button
+                  id="victory-view-board"
+                  type="button"
+                  onClick={onDismiss}
+                  className="flex-1 bg-[#1e1a23] hover:bg-[#2c2832] border border-[#5b3f46]/40 text-neon-text font-bold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-150 flex items-center justify-center gap-2 text-xs font-mono"
+                >
+                  <Eye className="w-4 h-4 text-neon-cyan shrink-0" />
+                  VIEW COMPLETED BOARD
+                </button>
+              )}
+
+              <button
+                id="victory-new-game"
+                onClick={onAction}
+                className="flex-1 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-150 flex items-center justify-center gap-2 text-xs"
+              >
+                <RefreshCw className="w-4 h-4 shrink-0" />
+                NEW GRID
+              </button>
+            </div>
           </div>
         )}
       </div>
