@@ -42,31 +42,59 @@ export default function App() {
     return [];
   });
 
-  // Fetch global leaderboard from Supabase
+  // Fetch global leaderboard
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('scores')
-          .select('username, time_spent_seconds')
-          .eq('difficulty', difficulty.toLowerCase())
-          .order('time_spent_seconds', { ascending: true })
-          .limit(10);
+      setIsLoadingLeaderboard(true);
+      const useSupabase = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-        if (error) throw error;
+      if (useSupabase) {
+        try {
+          const { data, error } = await supabase
+            .from('scores')
+            .select('username, time_spent_seconds')
+            .eq('difficulty', difficulty.toLowerCase())
+            .order('time_spent_seconds', { ascending: true })
+            .limit(10);
 
-        const ranked = (data || []).map((item, index) => ({
-          rank: index + 1,
-          username: item.username,
-          timeSec: item.time_spent_seconds,
-          avatarUrl: ''
-        }));
-        setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
-      } catch (e) {
-        console.warn('Failed to fetch leaderboard, using fallback:', e);
-        setGlobalRankings(INITIAL_GLOBAL_RANKINGS);
-      } finally {
-        setIsLoadingLeaderboard(false);
+          if (error) throw error;
+
+          const ranked = (data || []).map((item, index) => ({
+            rank: index + 1,
+            username: item.username,
+            timeSec: item.time_spent_seconds,
+            avatarUrl: ''
+          }));
+          setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
+        } catch (e) {
+          console.warn('Failed to fetch leaderboard from Supabase, using fallback:', e);
+          setGlobalRankings(INITIAL_GLOBAL_RANKINGS);
+        } finally {
+          setIsLoadingLeaderboard(false);
+        }
+      } else {
+        // Fallback to local Ruby Sinatra backend API
+        try {
+          const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4567/api';
+          const res = await fetch(`${API_BASE}/leaderboard?difficulty=${difficulty.toLowerCase()}`);
+          if (res.ok) {
+            const data = await res.json();
+            const ranked = data.map((item: any, index: number) => ({
+              rank: index + 1,
+              username: item.username,
+              timeSec: item.time_spent_seconds,
+              avatarUrl: ''
+            }));
+            setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
+          } else {
+            setGlobalRankings(INITIAL_GLOBAL_RANKINGS);
+          }
+        } catch (e) {
+          console.warn('Failed to fetch leaderboard from local API, using fallback:', e);
+          setGlobalRankings(INITIAL_GLOBAL_RANKINGS);
+        } finally {
+          setIsLoadingLeaderboard(false);
+        }
       }
     };
     fetchLeaderboard();
@@ -199,7 +227,7 @@ export default function App() {
     }
   }, [difficulty, mistakes, pauseTimer]);
 
-  // Record a score submission to Supabase
+  // Record a score submission (Support both Supabase and local API fallback)
   const handleLeaderboardSubmit = async (name: string) => {
     const finalSeconds = elapsedOffsetRef.current / 1000;
     const cleanName = name.trim().toUpperCase() || 'ANONYMOUS';
@@ -211,35 +239,69 @@ export default function App() {
       return updated.map((item, index) => ({ ...item, rank: index + 1 })).slice(0, 10);
     });
 
-    try {
-      // Insert score into Supabase
-      const { error } = await supabase
-        .from('scores')
-        .insert([{
-          username: cleanName,
-          time_spent_seconds: finalSeconds,
-          difficulty: difficulty.toLowerCase()
-        }]);
+    const useSupabase = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      if (error) throw error;
+    if (useSupabase) {
+      try {
+        // Insert score into Supabase
+        const { error } = await supabase
+          .from('scores')
+          .insert([{
+            username: cleanName,
+            time_spent_seconds: finalSeconds,
+            difficulty: difficulty.toLowerCase()
+          }]);
 
-      // Refetch to get the real sorted leaderboard
-      const { data } = await supabase
-        .from('scores')
-        .select('username, time_spent_seconds')
-        .eq('difficulty', difficulty.toLowerCase())
-        .order('time_spent_seconds', { ascending: true })
-        .limit(10);
+        if (error) throw error;
 
-      const ranked = (data || []).map((item, index) => ({
-        rank: index + 1,
-        username: item.username,
-        timeSec: item.time_spent_seconds,
-        avatarUrl: ''
-      }));
-      setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
-    } catch (e) {
-      console.warn('Error submitting score to Supabase:', e);
+        // Refetch to get the real sorted leaderboard
+        const { data } = await supabase
+          .from('scores')
+          .select('username, time_spent_seconds')
+          .eq('difficulty', difficulty.toLowerCase())
+          .order('time_spent_seconds', { ascending: true })
+          .limit(10);
+
+        const ranked = (data || []).map((item, index) => ({
+          rank: index + 1,
+          username: item.username,
+          timeSec: item.time_spent_seconds,
+          avatarUrl: ''
+        }));
+        setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
+      } catch (e) {
+        console.warn('Error submitting score to Supabase:', e);
+      }
+    } else {
+      // Fallback to local Ruby Sinatra backend API
+      try {
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4567/api';
+        const res = await fetch(`${API_BASE}/leaderboard`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: cleanName,
+            time: finalSeconds,
+            difficulty: difficulty
+          })
+        });
+        
+        if (res.ok) {
+          const leaderboardRes = await fetch(`${API_BASE}/leaderboard?difficulty=${difficulty.toLowerCase()}`);
+          if (leaderboardRes.ok) {
+            const data = await leaderboardRes.json();
+            const ranked = data.map((item: any, index: number) => ({
+              rank: index + 1,
+              username: item.username,
+              timeSec: item.time_spent_seconds,
+              avatarUrl: ''
+            }));
+            setGlobalRankings(ranked.length > 0 ? ranked : INITIAL_GLOBAL_RANKINGS);
+          }
+        }
+      } catch (e) {
+        console.warn('Error submitting score to local API:', e);
+      }
     }
   };
 
