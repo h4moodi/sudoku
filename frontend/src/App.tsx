@@ -303,19 +303,25 @@ export default function App() {
 
   // Interaction handlers on SudokuBoard
   const handleCellSelect = (r: number, c: number) => {
-    const targetCell = cells.find(item => item.row === r && item.col === c);
-    setSelectedCell({ row: r, col: c });
-
-    // Cell-First or Digit-First mapping:
-    // If we have an activeNumber selected, and they clicked to fill an empty cell
-    if (activeNumber && targetCell && !targetCell.isInitial && targetCell.value === 0) {
-      handleCellInput(r, c, activeNumber);
-    } else if (targetCell && targetCell.value !== 0) {
-      // Highlight occurrences of this number across the board
-      setActiveNumber(targetCell.value);
-    } else {
-      // Clear key state mapping
+    const isAlreadySelected = selectedCell?.row === r && selectedCell?.col === c;
+    if (isAlreadySelected) {
+      setSelectedCell(null);
       setActiveNumber(null);
+    } else {
+      const targetCell = cells.find(item => item.row === r && item.col === c);
+      setSelectedCell({ row: r, col: c });
+
+      // Cell-First or Digit-First mapping:
+      // If we have an activeNumber selected, and they clicked to fill an empty cell
+      if (activeNumber && targetCell && !targetCell.isInitial && targetCell.value === 0) {
+        handleCellInput(r, c, activeNumber);
+      } else if (targetCell && targetCell.value !== 0) {
+        // Highlight occurrences of this number across the board
+        setActiveNumber(targetCell.value);
+      } else {
+        // Clear key state mapping
+        setActiveNumber(null);
+      }
     }
   };
 
