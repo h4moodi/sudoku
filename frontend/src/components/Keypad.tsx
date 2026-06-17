@@ -21,9 +21,9 @@ export default function Keypad({
   remainingNumbers,
 }: KeypadProps) {
   return (
-    <div id="keypad-container" className="flex flex-col items-center gap-4 w-full select-none">
+    <div id="keypad-container" className="flex flex-col items-center gap-3 sm:gap-4 w-full select-none">
       {/* 1 - 9 Number Slots */}
-      <div id="number-buttons-grid" className="grid grid-cols-9 gap-1 sm:gap-2 w-full max-w-md">
+      <div id="number-buttons-grid" className="grid grid-cols-9 gap-1 sm:gap-2 w-full">
         {Array.from({ length: 9 }).map((_, idx) => {
           const num = idx + 1;
           const isSelected = activeNumber === num;
@@ -37,7 +37,7 @@ export default function Keypad({
               onClick={() => onNumberSelect(num)}
               type="button"
               className={`
-                relative flex flex-col items-center justify-center py-2 px-1 focus:outline-none rounded-lg border transition-all duration-150 h-12 md:h-14
+                relative flex flex-col items-center justify-center py-1.5 sm:py-2 px-1 focus:outline-none rounded-lg border transition-all duration-150 h-10 sm:h-12 md:h-14
                 ${
                   isSelected
                     ? 'bg-[#ff4a8e] text-white border-neon-pink shadow-[0_0_12px_rgba(255,74,142,0.6)]'
@@ -61,8 +61,8 @@ export default function Keypad({
         })}
       </div>
 
-      {/* Control Utility Buttons (Pencil/Notes Toggle, Backspace, Hint) */}
-      <div id="control-buttons-grid" className="flex flex-wrap items-center justify-center gap-3 w-full max-w-md">
+      {/* Control Utility Buttons */}
+      <div id="control-buttons-grid" className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full">
         {/* Toggle Normal vs Notes Mode */}
         <button
           id="btn-toggle-notes"
@@ -98,7 +98,7 @@ export default function Keypad({
           id="btn-hint"
           onClick={onGetHint}
           type="button"
-          className="flex-1 min-w-[140px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2.5 px-6 rounded-lg transition-all duration-200 outline-none h-11 glow-green transform hover:scale-105 active:scale-95"
+          className="flex-1 min-w-[100px] sm:min-w-[140px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 outline-none h-11 glow-green transform hover:scale-105 active:scale-95"
         >
           <Lightbulb className="w-4 h-4 fill-current shrink-0" />
           <span className="font-display tracking-wider text-xs uppercase">

@@ -444,9 +444,9 @@ export default function App() {
     <div className="min-h-screen bg-[#15121a] text-white flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
       
       {/* Outer Glow Header Rail */}
-      <header className="w-full max-w-7xl flex items-center justify-between border-b border-white/10 pb-5 mb-6">
-        <div className="flex items-center gap-3">
-          <span className="text-xl md:text-2xl font-extrabold font-display tracking-tight text-white flex items-center gap-2">
+      <header className="w-full max-w-7xl flex items-center justify-between border-b border-white/10 pb-3 sm:pb-5 mb-4 sm:mb-6 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-base sm:text-xl md:text-2xl font-extrabold font-display tracking-tight text-white flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
             <span className="text-neon-pink text-glow-pink">KALLE'S</span>
             <span className="text-white">SUDOKU</span>
           </span>
@@ -457,10 +457,10 @@ export default function App() {
         </div>
 
         {/* Ticking Timer HUD */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#1e1a23] px-4 py-1.5 rounded-lg border border-neon-pink/30 shadow-[0_0_10px_rgba(255,74,142,0.1)]">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 bg-[#1e1a23] px-2 sm:px-4 py-1.5 rounded-lg border border-neon-pink/30 shadow-[0_0_10px_rgba(255,74,142,0.1)]">
             <span className="text-neon-pink font-semibold text-xs shrink-0 select-none animate-pulse">⏰</span>
-            <span className="font-mono text-base md:text-lg font-bold tracking-widest text-neon-pink-glow text-glow-pink">
+            <span className="font-mono text-xs sm:text-base md:text-lg font-bold tracking-wide sm:tracking-widest text-neon-pink-glow text-glow-pink">
               {formattedMinutes}:{formattedSeconds}.{formattedHund}
             </span>
           </div>
@@ -470,10 +470,10 @@ export default function App() {
             id="btn-pause-header"
             onClick={togglePause}
             type="button"
-            className="p-2 rounded-lg bg-[#2c2832] border border-white/10 text-neon-muted hover:text-white transition-all h-9 flex items-center justify-center cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-lg bg-[#2c2832] border border-white/10 text-neon-muted hover:text-white transition-all h-8 sm:h-9 flex items-center justify-center cursor-pointer"
             title="Pause puzzle matrix"
           >
-            {overlayStatus === 'paused' ? <Play className="w-4 h-4 fill-current text-neon-green" /> : <Pause className="w-4 h-4" />}
+            {overlayStatus === 'paused' ? <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current text-neon-green" /> : <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           {/* Hot New Game block */}
@@ -481,7 +481,7 @@ export default function App() {
             id="btn-newgame-header"
             onClick={handleNewGame}
             type="button"
-            className="bg-neon-pink hover:bg-neon-pink-glow text-[#65002f] font-bold text-xs uppercase tracking-wider py-2 px-4 rounded-lg shadow-md hover:scale-[1.02] active:scale-95 transition-all text-glow-pink cursor-pointer font-mono"
+            className="bg-neon-pink hover:bg-neon-pink-glow text-[#65002f] font-bold text-[10px] sm:text-xs uppercase tracking-wider py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg shadow-md hover:scale-[1.02] active:scale-95 transition-all text-glow-pink cursor-pointer font-mono whitespace-nowrap"
           >
             NEW GAME
           </button>
@@ -489,17 +489,21 @@ export default function App() {
       </header>
 
       {/* Main Container Workspace layout */}
-      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start flex-1">
+      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start flex-1">
         
-        {/* COL 1: SELECT DIFFICULTIES (lg:col-span-3) */}
-        <section id="sidebar-difficulty" className="lg:col-span-3 bg-[#1e1a23] rounded-lg border border-white/5 p-5 self-stretch flex flex-col justify-between">
+        {/* COL 1: SELECT DIFFICULTIES (lg:col-span-3) — horizontal strip on mobile, vertical sidebar on desktop */}
+        <section id="sidebar-difficulty" className="lg:col-span-3 bg-[#1e1a23] rounded-lg border border-white/5 p-3 sm:p-5 order-2 lg:order-none flex flex-col justify-between">
           <div>
-            <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-neon-pink-glow mb-1">
-              Difficulty
-            </h2>
-            <p className="text-[11px] text-neon-muted mb-4">SELECT CHALLENGE</p>
+            <div className="flex items-center justify-between mb-2 sm:mb-0">
+              <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-neon-pink-glow">
+                Difficulty
+              </h2>
+              <p className="text-[11px] text-neon-muted lg:hidden">{difficulty.toUpperCase()}</p>
+            </div>
+            <p className="hidden lg:block text-[11px] text-neon-muted mb-4">SELECT CHALLENGE</p>
 
-            <nav className="space-y-2">
+            {/* Horizontal on mobile, vertical on desktop */}
+            <nav className="flex flex-row flex-wrap gap-2 mt-2 lg:flex-col lg:space-y-2 lg:gap-0 lg:mt-0 lg:mt-4">
               {([
                 { id: 'Easy', icon: '❶' },
                 { id: 'Medium', icon: '❷' },
@@ -517,7 +521,8 @@ export default function App() {
                       initGame(d.id);
                     }}
                     className={`
-                      w-full flex items-center justify-between py-3 px-4 rounded-lg font-mono text-xs font-bold tracking-wider transition-all duration-200 border text-left
+                      flex items-center gap-2 py-2 px-3 lg:w-full lg:justify-between lg:py-3 lg:px-4
+                      rounded-lg font-mono text-xs font-bold tracking-wider transition-all duration-200 border
                       ${
                         isActive
                           ? 'bg-neon-pink text-[#65002f] border-neon-pink shadow-[0_0_15px_rgba(255,74,142,0.4)]'
@@ -525,12 +530,10 @@ export default function App() {
                       }
                     `}
                   >
-                    <span className="flex items-center gap-3">
-                      <span className="opacity-80">{d.icon}</span>
-                      <span>{d.id.toUpperCase()}</span>
-                    </span>
+                    <span className="opacity-80">{d.icon}</span>
+                    <span>{d.id.toUpperCase()}</span>
                     {isActive && (
-                      <span className="text-[9px] bg-[#65002f]/15 px-2 py-0.5 rounded text-white animate-pulse">
+                      <span className="hidden lg:inline text-[9px] bg-[#65002f]/15 px-2 py-0.5 rounded text-white animate-pulse">
                         ACTIVE
                       </span>
                     )}
@@ -540,8 +543,8 @@ export default function App() {
             </nav>
           </div>
 
-          {/* Rules / Tip Guide Info console */}
-          <div className="mt-8 pt-6 border-t border-white/5 space-y-3">
+          {/* Rules — only show on desktop where there's space */}
+          <div className="hidden lg:block mt-8 pt-6 border-t border-white/5 space-y-3">
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-neon-pink" />
               <span className="text-[10px] font-mono text-white tracking-widest font-bold">ARCADE PROTOCOLS</span>
@@ -555,16 +558,16 @@ export default function App() {
           </div>
         </section>
 
-        {/* COL 2: MAIN PLAY ZONE (lg:col-span-6) */}
-        <section id="arena-workbench" className="lg:col-span-6 flex flex-col items-center gap-5">
+        {/* COL 2: MAIN PLAY ZONE (lg:col-span-6) — first on mobile */}
+        <section id="arena-workbench" className="lg:col-span-6 flex flex-col items-center gap-3 sm:gap-5 order-1 lg:order-none">
           
           {/* Header Accuracy Hud bar */}
-          <div className="w-full flex items-center justify-between bg-[#1e1a23] p-4 rounded-lg border border-white/5 font-mono">
+          <div className="w-full flex items-center justify-between bg-[#1e1a23] p-2.5 sm:p-4 rounded-lg border border-white/5 font-mono">
             
             {/* Accuracy tracker */}
             <div className="flex flex-col gap-1 w-2/3">
               <div className="flex justify-between items-center pr-2">
-                <span className="text-[10px] text-neon-muted font-bold tracking-widest">
+                <span className="text-[9px] sm:text-[10px] text-neon-muted font-bold tracking-widest">
                   ACCURACY
                 </span>
                 <span className="text-xs text-neon-green-glow font-bold">
@@ -572,8 +575,8 @@ export default function App() {
                 </span>
               </div>
               
-              {/* Segmented Bar styled perfectly according to Neon Pulse rules */}
-              <div className="flex gap-1 h-2.5 w-full bg-[#15121a] p-0.5 rounded border border-white/5">
+              {/* Segmented accuracy bar */}
+              <div className="flex gap-0.5 sm:gap-1 h-2 sm:h-2.5 w-full bg-[#15121a] p-0.5 rounded border border-white/5">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const segValue = (i + 1) * 10;
                   const isActive = accurateRating >= segValue;
@@ -596,10 +599,10 @@ export default function App() {
 
             {/* Mistakes tracking */}
             <div className="text-right flex flex-col justify-center items-end">
-              <span className="text-[10px] text-neon-muted font-bold tracking-widest uppercase mb-1">
+              <span className="text-[9px] sm:text-[10px] text-neon-muted font-bold tracking-widest uppercase mb-1">
                 MISTAKES
               </span>
-              <span className={`text-sm tracking-widest font-bold ${mistakes > 0 ? 'text-neon-pink animate-pulse' : 'text-white'}`}>
+              <span className={`text-xs sm:text-sm tracking-widest font-bold ${mistakes > 0 ? 'text-neon-pink animate-pulse' : 'text-white'}`}>
                 {mistakes}/5
               </span>
             </div>
@@ -651,7 +654,7 @@ export default function App() {
         </section>
 
         {/* COL 3: LEADERBOARD / HISTORY (lg:col-span-3) */}
-        <section id="sidebar-leaderboard" className="lg:col-span-3 self-stretch flex flex-col">
+        <section id="sidebar-leaderboard" className="lg:col-span-3 self-stretch flex flex-col order-3 lg:order-none">
           <RankingList
             currentDifficulty={difficulty}
             userRuns={userRuns}
