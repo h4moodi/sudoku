@@ -6,6 +6,7 @@ interface KeypadProps {
   onNumberSelect: (num: number) => void;
   onClearCell: () => void;
   onGetHint: () => void;
+  onShowSolution: () => void;
   isNotesMode: boolean;
   onToggleNotesMode: () => void;
   remainingNumbers: Record<number, number>; // Maps 1-9 to remaining empty counts (to display progress!)
@@ -16,6 +17,7 @@ export default function Keypad({
   onNumberSelect,
   onClearCell,
   onGetHint,
+  onShowSolution,
   isNotesMode,
   onToggleNotesMode,
   remainingNumbers,
@@ -98,11 +100,24 @@ export default function Keypad({
           id="btn-hint"
           onClick={onGetHint}
           type="button"
-          className="flex-1 min-w-[100px] sm:min-w-[140px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2 sm:py-2.5 px-4 sm:px-6 rounded-lg transition-all duration-200 outline-none h-11 glow-green transform hover:scale-105 active:scale-95"
+          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 glow-green transform hover:scale-105 active:scale-95"
         >
           <Lightbulb className="w-4 h-4 fill-current shrink-0" />
           <span className="font-display tracking-wider text-xs uppercase">
-            HINT SYSTEM
+            HINT
+          </span>
+        </button>
+
+        {/* Premium Cyan "SHOW SOLUTION" Button */}
+        <button
+          id="btn-show-solution"
+          onClick={onShowSolution}
+          type="button"
+          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#00dbe9] hover:bg-[#7effff] text-[#003c40] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 glow-cyan transform hover:scale-105 active:scale-95"
+        >
+          <Eye className="w-4 h-4 shrink-0" />
+          <span className="font-display tracking-wider text-xs uppercase">
+            SOLUTION
           </span>
         </button>
       </div>

@@ -377,6 +377,22 @@ export default function App() {
     }
   };
 
+  // Solves the entire board instantly
+  const handleShowSolution = () => {
+    if (window.confirm("Do you want to reveal the full solution and complete the grid?")) {
+      setCells(prevCells => {
+        const solved = prevCells.map(c => ({
+          ...c,
+          value: c.correctValue,
+          isError: false,
+          notes: []
+        }));
+        setTimeout(() => checkVictory(solved), 100);
+        return solved;
+      });
+    }
+  };
+
   // Keyboard navigation binds for convenient gaming
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -639,6 +655,7 @@ export default function App() {
               onNumberSelect={handleNumberSelect}
               onClearCell={handleClearCell}
               onGetHint={handleGetHint}
+              onShowSolution={handleShowSolution}
               isNotesMode={isNotesMode}
               onToggleNotesMode={() => setIsNotesMode(!isNotesMode)}
               remainingNumbers={remainingNumbers}

@@ -35,6 +35,11 @@
   border-color: #2ff801;
 }
 
+@utility glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 219, 233, 0.85);
+  border-color: #00dbe9;
+}
+
 @utility text-glow-pink {
   text-shadow: 0 0 6px rgba(255, 74, 142, 0.8);
 }
