@@ -160,12 +160,12 @@ export default function App() {
     initGame(difficulty);
   };
 
-  // Remaining counts map for keypad numbers
+  // Remaining counts map for keypad numbers (count how many slots out of 9 are filled)
   const remainingNumbers = useMemo(() => {
     const counts: Record<number, number> = {};
     for (let num = 1; num <= 9; num++) {
-      const solved = cells.filter(c => c.value === num && c.value === c.correctValue).length;
-      counts[num] = Math.max(0, 9 - solved);
+      const placed = cells.filter(c => c.value === num).length;
+      counts[num] = Math.max(0, 9 - placed);
     }
     return counts;
   }, [cells]);
@@ -316,13 +316,17 @@ export default function App() {
 
   // Keyboard number selection is pressed
   const handleNumberSelect = (num: number) => {
-    setActiveNumber(num);
-    
-    // Cell-First mapping: If a cell is active, write to it immediately
-    if (selectedCell) {
-      const cell = cells.find(c => c.row === selectedCell.row && c.col === selectedCell.col);
-      if (cell && !cell.isInitial && cell.value !== num) {
-        handleCellInput(selectedCell.row, selectedCell.col, num);
+    if (activeNumber === num) {
+      setActiveNumber(null);
+    } else {
+      setActiveNumber(num);
+      
+      // Cell-First mapping: If a cell is active, write to it immediately
+      if (selectedCell) {
+        const cell = cells.find(c => c.row === selectedCell.row && c.col === selectedCell.col);
+        if (cell && !cell.isInitial && cell.value !== num) {
+          handleCellInput(selectedCell.row, selectedCell.col, num);
+        }
       }
     }
   };
@@ -336,6 +340,20 @@ export default function App() {
       }
       return c;
     }));
+  };
+
+  // Clear all user inputs and reset board to initial state
+  const handleClearAll = () => {
+    if (window.confirm("Are you sure you want to clear all your entries and reset the board?")) {
+      setCells(prev => prev.map(c => {
+        if (!c.isInitial) {
+          return { ...c, value: 0, isError: false, notes: [] };
+        }
+        return c;
+      }));
+      setMistakes(0);
+      setTotalPlacements(0);
+    }
   };
 
   // Solves the active / first empty box instantly
@@ -656,6 +674,7 @@ export default function App() {
               onClearCell={handleClearCell}
               onGetHint={handleGetHint}
               onShowSolution={handleShowSolution}
+              onClearAll={handleClearAll}
               isNotesMode={isNotesMode}
               onToggleNotesMode={() => setIsNotesMode(!isNotesMode)}
               remainingNumbers={remainingNumbers}

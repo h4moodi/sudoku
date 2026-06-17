@@ -1,5 +1,5 @@
 import React from 'react';
-import { Delete, Lightbulb, Edit, Eye } from 'lucide-react';
+import { Delete, Lightbulb, Edit, Eye, RotateCcw } from 'lucide-react';
 
 interface KeypadProps {
   activeNumber: number | null;
@@ -7,6 +7,7 @@ interface KeypadProps {
   onClearCell: () => void;
   onGetHint: () => void;
   onShowSolution: () => void;
+  onClearAll: () => void;
   isNotesMode: boolean;
   onToggleNotesMode: () => void;
   remainingNumbers: Record<number, number>; // Maps 1-9 to remaining empty counts (to display progress!)
@@ -18,6 +19,7 @@ export default function Keypad({
   onClearCell,
   onGetHint,
   onShowSolution,
+  onClearAll,
   isNotesMode,
   onToggleNotesMode,
   remainingNumbers,
@@ -93,6 +95,17 @@ export default function Keypad({
           className="flex items-center justify-center bg-[#1e1a23] hover:bg-red-500/20 hover:border-red-500/50 border border-[#5b3f46]/40 text-neon-text hover:text-red-400 p-3 rounded-lg transition-all duration-150 w-12 h-11"
         >
           <Delete className="w-4 h-4" />
+        </button>
+
+        {/* Clear All / Reset Board button */}
+        <button
+          id="btn-clear-all"
+          onClick={onClearAll}
+          type="button"
+          title="Reset the board to starting state"
+          className="flex items-center justify-center bg-[#1e1a23] hover:bg-red-500/20 hover:border-red-500/50 border border-[#5b3f46]/40 text-neon-text hover:text-red-400 p-3 rounded-lg transition-all duration-150 w-12 h-11"
+        >
+          <RotateCcw className="w-4 h-4" />
         </button>
 
         {/* Large Premium Green "HINT" Button */}
