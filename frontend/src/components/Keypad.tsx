@@ -44,7 +44,7 @@ export default function Keypad({
                 relative flex flex-col items-center justify-center py-1.5 sm:py-2 px-1 focus:outline-none rounded-lg border transition-all duration-150 h-10 sm:h-12 md:h-14
                 ${
                   isSelected
-                    ? 'bg-[#ff4a8e] text-white border-neon-pink shadow-[0_0_12px_rgba(255,74,142,0.6)]'
+                    ? 'bg-[#ff4a8e] text-white border-neon-pink'
                     : isCompleted
                       ? 'bg-[#15121a] text-neon-muted/35 border-[#5b3f46]/10 cursor-not-allowed'
                       : 'bg-[#1e1a23] text-neon-text border-[#5b3f46]/30 hover:border-neon-pink/50 hover:bg-[#2c2832]'
@@ -77,7 +77,7 @@ export default function Keypad({
             flex items-center gap-2 py-2 px-4 rounded-lg text-xs font-bold font-mono border transition-all duration-150 h-11
             ${
               isNotesMode
-                ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-[0_0_10px_rgba(0,219,233,0.3)]'
+                ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan'
                 : 'bg-[#1e1a23] border-[#5b3f46]/40 text-neon-muted hover:text-white hover:bg-[#2c2832]'
             }
           `}
@@ -113,7 +113,7 @@ export default function Keypad({
           id="btn-hint"
           onClick={onGetHint}
           type="button"
-          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 glow-green transform hover:scale-105 active:scale-95"
+          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 transform hover:scale-105 active:scale-95"
         >
           <Lightbulb className="w-4 h-4 fill-current shrink-0" />
           <span className="font-display tracking-wider text-xs uppercase">
@@ -126,7 +126,7 @@ export default function Keypad({
           id="btn-show-solution"
           onClick={onShowSolution}
           type="button"
-          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#00dbe9] hover:bg-[#7effff] text-[#003c40] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 glow-cyan transform hover:scale-105 active:scale-95"
+          className="flex-1 min-w-[100px] sm:min-w-[120px] flex items-center justify-center gap-2 bg-[#00dbe9] hover:bg-[#7effff] text-[#003c40] font-bold py-2 sm:py-2.5 px-4 rounded-lg transition-all duration-200 outline-none h-11 transform hover:scale-105 active:scale-95"
         >
           <Eye className="w-4 h-4 shrink-0" />
           <span className="font-display tracking-wider text-xs uppercase">

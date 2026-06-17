@@ -53,10 +53,10 @@ export default function GameOverlay({
       <div className="w-full max-w-sm text-center space-y-3 sm:space-y-5">
         {status === 'welcome' && (
           <div id="overlay-welcome" className="space-y-3">
-            <div className="inline-flex p-2.5 sm:p-3 bg-neon-pink/10 rounded-full border border-neon-pink/30 shadow-[0_0_15px_rgba(255,74,142,0.2)]">
+            <div className="inline-flex p-2.5 sm:p-3 bg-neon-pink/10 rounded-full border border-neon-pink/30">
               <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-neon-pink animate-pulse" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-wider text-glow-pink">
+            <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-wider">
               NEON SUDOKU
             </h2>
             <p className="text-xs text-neon-muted max-w-xs mx-auto">
@@ -73,7 +73,7 @@ export default function GameOverlay({
                     onClick={() => onChangeDifficulty?.(d)}
                     className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-all ${
                       difficulty === d
-                        ? 'bg-neon-pink text-black shadow-[0_0_10px_#ff4a8e]'
+                        ? 'bg-neon-pink text-black'
                         : 'bg-[#1e1a23] hover:bg-[#2c2832] text-neon-muted border border-white/5'
                     }`}
                   >
@@ -85,7 +85,7 @@ export default function GameOverlay({
             <button
               id="welcome-start"
               onClick={onAction}
-              className="w-full bg-[#ff4a8e] hover:bg-[#ffb1c5] text-white hover:text-black font-semibold py-2.5 sm:py-3 px-6 rounded-lg transition-all duration-200 shadow-lg glow-pink font-display flex items-center justify-center gap-2"
+              className="w-full bg-[#ff4a8e] hover:bg-[#ffb1c5] text-white hover:text-black font-semibold py-2.5 sm:py-3 px-6 rounded-lg transition-all duration-200 shadow-lg font-display flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               LAUNCH ARENA
@@ -96,7 +96,7 @@ export default function GameOverlay({
         {status === 'paused' && (
           <div id="overlay-paused" className="space-y-3">
             <div className="text-3xl sm:text-4xl text-neon-pink select-none animate-pulse">⏸</div>
-            <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-widest text-glow-pink">
+            <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-widest">
               GAME PAUSED
             </h2>
             <p className="text-xs text-neon-muted">
@@ -119,10 +119,10 @@ export default function GameOverlay({
 
         {status === 'gameover' && (
           <div id="overlay-gameover" className="space-y-3 animate-fade-in">
-            <div className="inline-flex p-3 bg-[#ff4a8e]/10 rounded-full border border-neon-pink/30 shadow-[0_0_15px_rgba(255,177,197,0.15)]">
+            <div className="inline-flex p-3 bg-[#ff4a8e]/10 rounded-full border border-neon-pink/30">
               <Coffee className="w-7 h-7 sm:w-8 sm:h-8 text-neon-pink-glow animate-pulse" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold font-display text-white tracking-wide text-glow-pink uppercase">
+            <h2 className="text-lg sm:text-xl font-bold font-display text-white tracking-wide uppercase">
               its okay kallee better luck next time
             </h2>
             <p className="text-xs text-neon-muted leading-relaxed max-w-xs mx-auto">
@@ -153,10 +153,10 @@ export default function GameOverlay({
 
         {status === 'victory' && (
           <div id="overlay-victory" className="space-y-3">
-            <div className="inline-flex p-2.5 sm:p-3 bg-neon-green/10 rounded-full border border-neon-green/30 shadow-[0_0_15px_rgba(47,248,1,0.2)]">
+            <div className="inline-flex p-2.5 sm:p-3 bg-neon-green/10 rounded-full border border-neon-green/30">
               <Trophy className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ff801]" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold font-display text-[#2ff801] tracking-wider text-glow-green">
+            <h2 className="text-xl sm:text-2xl font-bold font-display text-[#2ff801] tracking-wider">
               GRID COMPLETE!
             </h2>
             <p className="text-xs text-neon-muted">

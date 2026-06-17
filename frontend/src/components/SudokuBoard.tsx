@@ -49,7 +49,7 @@ export default function SudokuBoard({
   return (
     <div
       id="sudoku-grid-wrapper"
-      className="relative p-1 bg-[#100d15] rounded-xl border border-neon-pink/30 shadow-[0_0_20px_rgba(255,74,142,0.15)] select-none"
+      className="relative p-1 bg-[#100d15] rounded-xl border border-neon-pink/30 select-none"
     >
       {/* Empty state — shown briefly on first mount before puzzle is generated */}
       {cells.length === 0 ? (
@@ -95,9 +95,9 @@ export default function SudokuBoard({
             const isCompleted = cell && cell.value !== 0 && completedNumbers.includes(cell.value) && !cell.isError;
 
             if (cell?.isRevealed) {
-              textStyle = 'text-[#00a2ff] font-extrabold font-sora text-glow-blue drop-shadow-[0_0_6px_#00a2ff]';
+              textStyle = 'text-[#00a2ff] font-extrabold font-sora';
             } else if (isCompleted) {
-              textStyle = 'text-neon-green font-extrabold font-sora text-glow-green drop-shadow-[0_0_6px_#2ff801]';
+              textStyle = 'text-neon-green font-extrabold font-sora';
             } else if (cell?.isInitial) {
               textStyle = 'text-white font-bold font-sora';
             } else if (cell?.isError) {
@@ -119,9 +119,9 @@ export default function SudokuBoard({
                 {/* Visual hover guides */}
                 <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors pointer-events-none" />
 
-                {/* Selected Cell glowing target rings */}
+                {/* Selected Cell target rings */}
                 {isSelected && (
-                  <div className="absolute inset-0 border-2 border-neon-pink-glow pointer-events-none glow-pink-sm" />
+                  <div className="absolute inset-0 border-2 border-neon-pink pointer-events-none" />
                 )}
 
                 {/* Content Rendering */}

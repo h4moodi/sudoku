@@ -482,11 +482,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#15121a] text-white flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
       
-      {/* Outer Glow Header Rail */}
+      {/* Header Rail */}
       <header className="w-full max-w-7xl flex items-center justify-between border-b border-white/10 pb-3 sm:pb-5 mb-4 sm:mb-6 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-base sm:text-xl md:text-2xl font-extrabold font-display tracking-tight text-white flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <span className="text-neon-pink text-glow-pink">KALLE'S</span>
+            <span className="text-neon-pink">KALLE'S</span>
             <span className="text-white">SUDOKU</span>
           </span>
           <span className="hidden md:inline text-neon-pink/40">|</span>
@@ -497,9 +497,9 @@ export default function App() {
 
         {/* Ticking Timer HUD */}
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-          <div className="flex items-center gap-1 sm:gap-2 bg-[#1e1a23] px-2 sm:px-4 py-1.5 rounded-lg border border-neon-pink/30 shadow-[0_0_10px_rgba(255,74,142,0.1)]">
+          <div className="flex items-center gap-1 sm:gap-2 bg-[#1e1a23] px-2 sm:px-4 py-1.5 rounded-lg border border-neon-pink/30">
             <span className="text-neon-pink font-semibold text-xs shrink-0 select-none animate-pulse">⏰</span>
-            <span className="font-mono text-xs sm:text-base md:text-lg font-bold tracking-wide sm:tracking-widest text-neon-pink-glow text-glow-pink">
+            <span className="font-mono text-xs sm:text-base md:text-lg font-bold tracking-wide sm:tracking-widest text-neon-pink-glow">
               {formattedMinutes}:{formattedSeconds}.{formattedHund}
             </span>
           </div>
@@ -520,7 +520,7 @@ export default function App() {
             id="btn-newgame-header"
             onClick={handleNewGame}
             type="button"
-            className="bg-neon-pink hover:bg-neon-pink-glow text-[#65002f] font-bold text-[10px] sm:text-xs uppercase tracking-wider py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg shadow-md hover:scale-[1.02] active:scale-95 transition-all text-glow-pink cursor-pointer font-mono whitespace-nowrap"
+            className="bg-neon-pink hover:bg-neon-pink-glow text-[#65002f] font-bold text-[10px] sm:text-xs uppercase tracking-wider py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer font-mono whitespace-nowrap"
           >
             NEW GAME
           </button>
@@ -564,7 +564,7 @@ export default function App() {
                       rounded-lg font-mono text-xs font-bold tracking-wider transition-all duration-200 border
                       ${
                         isActive
-                          ? 'bg-neon-pink text-[#65002f] border-neon-pink shadow-[0_0_15px_rgba(255,74,142,0.4)]'
+                          ? 'bg-neon-pink text-[#65002f] border-neon-pink'
                           : 'bg-[#15121a] hover:bg-[#2c2832] text-neon-muted hover:text-white border-white/5'
                       }
                     `}
@@ -626,7 +626,7 @@ export default function App() {
                         flex-1 rounded-sm transition-all duration-300
                         ${
                           isActive
-                            ? 'bg-[#2ff801] shadow-[0_0_4px_#2ff801]'
+                            ? 'bg-[#2ff801]'
                             : 'bg-white/5'
                         }
                       `}
@@ -657,7 +657,7 @@ export default function App() {
             />
 
             {isBoardSolved && overlayStatus === null && (
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-[#1e1a23]/95 border border-[#2ff801]/40 rounded-full px-4 py-2.5 flex items-center gap-3 shadow-[0_0_15px_rgba(47,248,1,0.35)] animate-pulse font-mono text-[10px] sm:text-xs">
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-[#1e1a23]/95 border border-[#2ff801]/40 rounded-full px-4 py-2.5 flex items-center gap-3 font-mono text-[10px] sm:text-xs">
                 <span className="text-[#2ff801] font-bold tracking-wider">🏆 GRID COMPLETE!</span>
                 <button
                   onClick={() => setOverlayStatus('victory')}

@@ -86,7 +86,7 @@ export default function RankingList({
                 </span>
                 
                 {/* Custom glowing dynamic avatar */}
-                <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-[#8f0045] to-[#ff4a8e] flex items-center justify-center border border-white/10 shadow-[0_0_10px_rgba(255,74,142,0.2)]">
+                <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-[#8f0045] to-[#ff4a8e] flex items-center justify-center border border-white/10">
                   <span className="text-[10px] font-bold text-white font-mono">
                     {player.username.substring(0, 2).toUpperCase()}
                   </span>

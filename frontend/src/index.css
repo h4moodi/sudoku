@@ -20,36 +20,17 @@
   --color-neon-muted: #aa888f;
 }
 
-/* Animations and extra glows */
+/* Animations and extra glows (Glows removed) */
 @utility glow-pink {
-  box-shadow: 0 0 15px rgba(255, 74, 142, 0.6);
   border-color: #ff4a8e;
 }
 
-@utility glow-pink-sm {
-  box-shadow: 0 0 8px rgba(255, 74, 142, 0.4);
-}
-
 @utility glow-green {
-  box-shadow: 0 0 20px rgba(47, 248, 1, 0.85);
   border-color: #2ff801;
 }
 
 @utility glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 219, 233, 0.85);
   border-color: #00dbe9;
-}
-
-@utility text-glow-pink {
-  text-shadow: 0 0 6px rgba(255, 74, 142, 0.8);
-}
-
-@utility text-glow-green {
-  text-shadow: 0 0 6px rgba(47, 248, 1, 0.8);
-}
-
-@utility text-glow-blue {
-  text-shadow: 0 0 6px rgba(0, 162, 255, 0.8);
 }
 
 /* Fade-in animation used by GameOverlay */
