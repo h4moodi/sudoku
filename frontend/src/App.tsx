@@ -8,7 +8,7 @@ import RankingList from './components/RankingList';
 import GameOverlay from './components/GameOverlay';
 import { playPlacementSound, playMistakeSound, playVictorySound, playWelcomeSound } from './utils/audio';
 
-const API_BASE = 'http://localhost:4567/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4567/api';
 
 // Initial global records matching screenshot and premium look (fallback)
 const INITIAL_GLOBAL_RANKINGS: HardcodedRank[] = [

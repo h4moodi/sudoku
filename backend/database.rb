@@ -1,43 +1,36 @@
 # frozen_string_literal: true
 
 # backend/database.rb
-# SQLite3 configuration for leaderboards with exact schema:
-# id, username, time_spent_seconds, difficulty, created_at
-require 'sqlite3'
-require 'fileutils'
+# PostgreSQL configuration for leaderboards.
+# Schema: id, username, time_spent_seconds, difficulty, created_at
+# Connects via DATABASE_URL environment variable (provided by Render).
+require 'pg'
 
 module SudokuDatabase
-  DB_PATH = File.expand_path('sudoku.db', __dir__)
+  def self.connection
+    PG.connect(ENV.fetch('DATABASE_URL'))
+  end
 
   def self.init_db!
-    db = SQLite3::Database.new(DB_PATH)
-    db.results_as_hash = true
-    db.execute("PRAGMA foreign_keys = ON;")
-
-    db.execute <<-SQL
+    db = connection
+    db.exec(<<-SQL)
       CREATE TABLE IF NOT EXISTS scores (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         username TEXT NOT NULL,
-        time_spent_seconds INTEGER NOT NULL,
+        time_spent_seconds FLOAT NOT NULL,
         difficulty TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     SQL
 
-    # Index for faster leaderboard queries
-    db.execute <<-SQL
-      CREATE INDEX IF NOT EXISTS idx_scores_difficulty_time 
+    db.exec(<<-SQL)
+      CREATE INDEX IF NOT EXISTS idx_scores_difficulty_time
       ON scores (difficulty, time_spent_seconds ASC);
     SQL
 
     db.close
-  end
-
-  def self.connection
-    db = SQLite3::Database.new(DB_PATH)
-    db.results_as_hash = true
-    db.execute("PRAGMA foreign_keys = ON;")
-    db
+  rescue => e
+    warn "Database init warning: #{e.message}"
   end
 
   def self.insert_score(username, time_spent_seconds, difficulty)
@@ -46,38 +39,39 @@ module SudokuDatabase
 
     db = connection
     begin
-      db.execute(
-        "INSERT INTO scores (username, time_spent_seconds, difficulty) VALUES (?, ?, ?);",
-        [cleaned_username, time_spent_seconds.to_i, difficulty.to_s.downcase]
+      db.exec_params(
+        "INSERT INTO scores (username, time_spent_seconds, difficulty) VALUES ($1, $2, $3);",
+        [cleaned_username, time_spent_seconds.to_f, difficulty.to_s.downcase]
       )
       true
-    rescue SQLite3::Exception => e
+    rescue PG::Error => e
       warn "Database error inserting score: #{e.message}"
       false
     ensure
-      db.close if db
+      db&.close
     end
   end
 
   def self.fetch_leaderboard(difficulty, limit = 10)
     db = connection
     begin
-      db.execute(
-        "SELECT id, username, time_spent_seconds, difficulty, created_at 
-         FROM scores 
-         WHERE difficulty = ? 
-         ORDER BY time_spent_seconds ASC 
-         LIMIT ?;",
+      result = db.exec_params(
+        "SELECT id, username, time_spent_seconds, difficulty, created_at
+         FROM scores
+         WHERE difficulty = $1
+         ORDER BY time_spent_seconds ASC
+         LIMIT $2;",
         [difficulty.to_s.downcase, limit]
       )
-    rescue SQLite3::Exception => e
+      result.map { |row| row }
+    rescue PG::Error => e
       warn "Database error fetching leaderboard: #{e.message}"
       []
     ensure
-      db.close if db
+      db&.close
     end
   end
 end
 
-# Auto-initialize when loaded
+# Auto-initialize table when loaded
 SudokuDatabase.init_db!
