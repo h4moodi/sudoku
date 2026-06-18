@@ -58,9 +58,7 @@ export default function GameOverlay({
               </span>
               kallee
             </h2>
-            <p className="tagline text-xs italic text-brown-light leading-relaxed max-w-xs mx-auto">
-              i always be there for you, don't be a stranger ♡
-            </p>
+
 
             <div className="py-2 space-y-2">
               <span className="text-[10px] text-brown-mute block font-bold uppercase tracking-widest">
