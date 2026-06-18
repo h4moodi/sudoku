@@ -1,25 +1,24 @@
 import React from 'react';
-import { HardcodedRank, UserRun } from '../types';
-import { Trophy, Clock, Zap, Star } from 'lucide-react';
+import { Trophy, Clock, History } from 'lucide-react';
+import { UserRun, HardcodedRank } from '../types';
 
 interface RankingListProps {
   currentDifficulty: string;
   userRuns: UserRun[];
   globalRankings: HardcodedRank[];
-  onClearHistory?: () => void;
   isLoading?: boolean;
+  onClearHistory?: () => void;
 }
 
 export default function RankingList({
   currentDifficulty,
   userRuns,
   globalRankings,
-  onClearHistory,
   isLoading = false,
+  onClearHistory,
 }: RankingListProps) {
-  const [activeTab, setActiveTab] = React.useState<'global' | 'my-runs'>('global');
+  const [activeTab, setActiveTab] = React.useState<'global' | 'local'>('global');
 
-  // Format Helper for Time
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = Math.floor(totalSeconds % 60);
@@ -28,126 +27,126 @@ export default function RankingList({
   };
 
   return (
-    <div id="rankings-container" className="flex flex-col h-full bg-[#1e1a23] rounded-lg border border-white/5 p-4 self-stretch font-sans">
-      <div className="flex items-center justify-between mb-1">
-        <h2 id="rankings-title" className="text-xs uppercase tracking-widest text-[#aa888f] font-mono font-bold">
-          Rankings
-        </h2>
-        <span className="text-[10px] bg-neon-pink/10 text-neon-pink px-2 py-0.5 rounded-full border border-neon-pink/20 font-mono font-medium">
-          {currentDifficulty.toUpperCase()}
-        </span>
+    <div
+      id="leaderboard-panel"
+      className="bg-[#fffcf8]/55 border border-brown-light/25 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 w-full h-full select-none"
+    >
+      {/* Title */}
+      <div className="flex items-center gap-2 border-b border-brown-light/15 pb-2.5 sm:pb-3">
+        <Trophy className="w-4 h-4 text-terracotta" />
+        <h3 className="font-display italic text-lg sm:text-xl font-bold text-brown-deep">
+          Scoreboard
+        </h3>
       </div>
-      <p className="text-[11px] text-[#aa888f] mb-4">TOP PLAYERS - GLOBAL</p>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10 mb-4">
+      <div className="grid grid-cols-2 gap-1.5 bg-[#e0d6c8]/40 p-1 rounded-lg">
         <button
-          id="tab-global"
           onClick={() => setActiveTab('global')}
-          className={`pb-2 pr-4 text-xs font-bold tracking-wider transition-all duration-300 relative ${
-            activeTab === 'global' ? 'text-neon-pink' : 'text-neon-muted hover:text-white'
-          }`}
+          className={`
+            py-1.5 rounded-md text-xs font-semibold font-sans tracking-wide transition-all cursor-pointer
+            ${
+              activeTab === 'global'
+                ? 'bg-[#fffcf8]/90 text-brown-deep shadow-sm'
+                : 'text-brown-mute hover:text-brown-deep'
+            }
+          `}
         >
-          GLOBAL
-          {activeTab === 'global' && (
-            <span className="absolute bottom-0 left-0 right-4 h-0.5 bg-neon-pink animate-pulse" />
-          )}
+          GLOBAL TOP 10
         </button>
         <button
-          id="tab-my-runs"
-          onClick={() => setActiveTab('my-runs')}
-          className={`pb-2 px-4 text-xs font-bold tracking-wider transition-all duration-300 relative ${
-            activeTab === 'my-runs' ? 'text-neon-pink' : 'text-neon-muted hover:text-white'
-          }`}
+          onClick={() => setActiveTab('local')}
+          className={`
+            py-1.5 rounded-md text-xs font-semibold font-sans tracking-wide transition-all cursor-pointer
+            ${
+              activeTab === 'local'
+                ? 'bg-[#fffcf8]/90 text-brown-deep shadow-sm'
+                : 'text-brown-mute hover:text-brown-deep'
+            }
+          `}
         >
-          MY STATS
-          {activeTab === 'my-runs' && (
-            <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-neon-pink animate-pulse" />
-          )}
+          PERSONAL LOGS
         </button>
       </div>
 
-      {/* List container */}
-      <div className="flex-1 overflow-y-auto space-y-2 max-h-[350px] pr-1">
-        {isLoading && activeTab === 'global' ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center text-[#aa888f]">
-            <div className="w-8 h-8 border-2 border-neon-pink border-t-transparent rounded-full animate-spin mb-2" />
-            <p className="text-xs">SYNCING WITH GLOBAL NODE...</p>
-          </div>
-        ) : activeTab === 'global' ? (
-          globalRankings.map((player) => (
-            <div
-              key={player.rank}
-              className="flex items-center justify-between bg-[#15121a] hover:bg-[#2c2832]/80 transition-colors duration-200 p-3 rounded-lg border border-white/5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold text-neon-pink-glow">
-                  #{player.rank.toString().padStart(2, '0')}
-                </span>
-                
-                {/* Custom glowing dynamic avatar */}
-                <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-[#8f0045] to-[#ff4a8e] flex items-center justify-center border border-white/10">
-                  <span className="text-[10px] font-bold text-white font-mono">
-                    {player.username.substring(0, 2).toUpperCase()}
-                  </span>
-                  {player.rank === 1 && (
-                    <Trophy className="absolute -top-1.5 -right-1.5 w-4 h-4 text-[#ffd700] fill-[#ffd700] drop-shadow" />
-                  )}
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="font-mono text-xs font-bold text-white tracking-wide truncate max-w-[120px]">
-                    {player.username}
-                  </span>
-                  <span className="text-[9px] text-neon-muted font-mono">
-                    VERIFIED RUN
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-right flex flex-col items-end">
-                <span className="font-mono text-xs text-neon-muted">
-                  {formatTime(player.timeSec)}
-                </span>
-                <span className="text-[8px] text-neon-green font-mono flex items-center gap-0.5">
-                  <Zap className="w-2.4 h-2.4" /> 100% ACC
-                </span>
-              </div>
-            </div>
-          ))
-        ) : (
+      {/* Tab Contents */}
+      <div className="flex-1 overflow-y-auto max-h-[300px] lg:max-h-[460px] pr-1">
+        {activeTab === 'global' ? (
+          /* Global Rankings */
           <div className="space-y-2">
-            {userRuns.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-[#aa888f]">
-                <Star className="w-8 h-8 opacity-20 mb-2 text-neon-pink" />
-                <p className="text-xs">No records on this browser yet.</p>
-                <p className="text-[10px] mt-1">Complete a Sudoku game to record your time!</p>
+            <p className="text-[9px] font-sans text-brown-mute tracking-widest uppercase text-center mb-1">
+              {currentDifficulty.toUpperCase()} RECORDS
+            </p>
+            {isLoading ? (
+              <div className="text-center py-8 text-xs font-mono text-brown-mute animate-pulse">
+                fetching matrix ranks...
+              </div>
+            ) : globalRankings.length === 0 ? (
+              <div className="text-center py-8 text-xs italic text-brown-mute">
+                No records found. Be the first!
               </div>
             ) : (
-              userRuns.map((run, i) => (
+              globalRankings.map((player) => (
                 <div
-                  key={run.id || i}
-                  className="flex items-center justify-between bg-[#15121a] p-3 rounded-lg border border-white/5"
+                  key={player.rank}
+                  className="flex items-center justify-between bg-[#fffcf8]/60 hover:bg-[#fffcf8]/90 transition-colors duration-200 p-2.5 rounded-lg border border-brown-light/15"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-neon-muted">
-                      #{String(i + 1).padStart(2, '0')}
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="font-mono text-xs font-bold text-brown-mute">
+                      #{player.rank.toString().padStart(2, '0')}
                     </span>
-                    <div className="flex flex-col">
-                      <span className="font-mono text-xs font-medium text-white">
-                        {run.difficulty} Difficulty
+                    
+                    {/* Circle avatar */}
+                    <div className="relative w-7 h-7 rounded-full bg-gradient-to-tr from-brown-deep to-brown-mute flex items-center justify-center border border-brown-light/20 shrink-0">
+                      <span className="text-[9px] font-bold text-white font-mono">
+                        {player.username.substring(0, 2).toUpperCase()}
                       </span>
-                      <span className="text-[9px] text-[#aa888f] font-mono">
-                        {run.date}
-                      </span>
+                      {player.rank === 1 && (
+                        <Trophy className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 text-[#ffd700] fill-[#ffd700]" />
+                      )}
                     </div>
+
+                    <span className="font-sans text-xs font-bold text-brown-deep truncate max-w-[100px] sm:max-w-[120px]">
+                      {player.username}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 font-mono text-xs text-sky-text font-bold">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>{formatTime(player.timeSec)}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          /* Personal History */
+          <div className="space-y-2">
+            {userRuns.length === 0 ? (
+              <div className="text-center py-8 text-xs italic text-brown-mute flex flex-col items-center gap-2">
+                <History className="w-7 h-7 opacity-35" />
+                <span>No local solves cached on this device yet.</span>
+              </div>
+            ) : (
+              userRuns.map((run) => (
+                <div
+                  key={run.id}
+                  className="flex items-center justify-between bg-[#fffcf8]/50 p-2.5 rounded-lg border border-brown-light/15"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-sans text-xs font-bold text-brown-deep">
+                      {run.difficulty} Mode
+                    </span>
+                    <span className="text-[9px] text-brown-mute font-mono">
+                      {run.date}
+                    </span>
                   </div>
 
                   <div className="text-right">
-                    <p className="font-mono text-xs text-neon-green-glow font-bold">
+                    <p className="font-mono text-xs text-sky-text font-bold">
                       {formatTime(run.timeSec)}
                     </p>
-                    <p className="text-[9px] text-neon-cyan/70 font-mono">
+                    <p className="text-[9px] text-sky-mid font-semibold">
                       Solved successfully!
                     </p>
                   </div>
@@ -159,21 +158,13 @@ export default function RankingList({
               <button
                 id="btn-clear-history"
                 onClick={onClearHistory}
-                className="w-full mt-4 text-[10px] text-red-400/60 hover:text-red-400 font-mono py-1 rounded bg-transparent border border-red-500/20 hover:bg-red-500/10 transition-colors"
+                className="w-full mt-4 text-[10px] text-terracotta/70 hover:text-terracotta border border-terracotta/20 hover:bg-terracotta/5 font-sans py-1.5 rounded-lg transition-colors cursor-pointer"
               >
                 CLEAR PERSONAL LIFETIME RUNS
               </button>
             )}
           </div>
         )}
-      </div>
-
-      {/* Info Badge */}
-      <div className="mt-4 p-3 bg-[#15121a]/60 rounded-lg border border-white/5 flex items-start gap-2">
-        <Clock className="w-4 h-4 text-neon-pink shrink-0 mt-0.5" />
-        <div className="text-[10px] text-neon-muted leading-relaxed font-sans">
-          Your best local completion times are saved. Beat a global champion to insert your name!
-        </div>
       </div>
     </div>
   );

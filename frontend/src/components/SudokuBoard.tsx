@@ -14,7 +14,7 @@ export default function SudokuBoard({
   onCellSelect,
   highlightNumber,
 }: SudokuBoardProps) {
-  // Precalculate which numbers 1-9 are completed (all 9 correctly placed)
+  // Precalculate completed numbers
   const completedNumbers = React.useMemo(() => {
     const counts: Record<number, number> = {};
     for (let num = 1; num <= 9; num++) {
@@ -25,20 +25,16 @@ export default function SudokuBoard({
       .map(([numStr]) => parseInt(numStr));
   }, [cells]);
 
-  // Helper to find a cell in our flat array of 81 cells
   const getCell = (row: number, col: number) => {
     return cells.find(c => c.row === row && c.col === col);
   };
 
-  // Check if cell is in the same row/col/box as selected cell
   const isPeer = (r: number, c: number) => {
     if (!selectedCell) return false;
-    if (selectedCell.row === r && selectedCell.col === c) return false; // self isn't a peer
-    
-    // Same row or col
+    if (selectedCell.row === r && selectedCell.col === c) return false;
+
     if (selectedCell.row === r || selectedCell.col === c) return true;
-    
-    // Same 3x3 box
+
     const selBoxR = Math.floor(selectedCell.row / 3);
     const selBoxC = Math.floor(selectedCell.col / 3);
     const cellBoxR = Math.floor(r / 3);
@@ -49,113 +45,110 @@ export default function SudokuBoard({
   return (
     <div
       id="sudoku-grid-wrapper"
-      className="relative p-1 bg-[#100d15] rounded-xl border border-neon-pink/30 select-none"
+      className="relative p-1.5 sm:p-3 bg-cream rounded-xl border border-brown-light/25 select-none"
     >
-      {/* Empty state — shown briefly on first mount before puzzle is generated */}
       {cells.length === 0 ? (
-        <div id="sudoku-main-grid" className="grid grid-cols-9 bg-[#15121a]">
+        <div id="sudoku-main-grid" className="grid grid-cols-9 bg-[#fffcf8]/40 border-2 border-brown-light rounded-lg overflow-hidden">
           {Array.from({ length: 81 }).map((_, i) => (
             <div
               key={i}
-              className="aspect-square bg-[#15121a] border border-[#5b3f46]/20 animate-pulse"
+              className="aspect-square bg-[#fffcf8]/40 border border-[#b49b87]/20 animate-pulse"
             />
           ))}
         </div>
       ) : (
-      /* 9x9 Grid layout */
-      <div id="sudoku-main-grid" className="grid grid-cols-9 bg-[#15121a]">
-        {Array.from({ length: 9 }).map((_, r) => {
-          return Array.from({ length: 9 }).map((_, c) => {
-            const cell = getCell(r, c);
-            const isSelected = selectedCell?.row === r && selectedCell?.col === c;
-            const peer = isPeer(r, c);
-            const hasSameValue =
-              highlightNumber !== null &&
-              highlightNumber !== 0 &&
-              cell?.value === highlightNumber;
+        <div
+          id="sudoku-main-grid"
+          className="grid grid-cols-9 border-2 border-brown-light rounded-lg overflow-hidden bg-[#fffcf8]/40"
+        >
+          {Array.from({ length: 9 }).map((_, r) => {
+            return Array.from({ length: 9 }).map((_, c) => {
+              const cell = getCell(r, c);
+              const isSelected = selectedCell?.row === r && selectedCell?.col === c;
+              const peer = isPeer(r, c);
+              const hasSameValue =
+                highlightNumber !== null &&
+                highlightNumber !== 0 &&
+                cell?.value === highlightNumber;
 
-            // Compute border classes for 3x3 blocks to match high-fidelity neon styling
-            const borderTop = r % 3 === 0 ? 'border-t-[3px] border-t-neon-pink' : 'border-t border-t-[#5b3f46]/30';
-            const borderLeft = c % 3 === 0 ? 'border-l-[3px] border-l-neon-pink' : 'border-l border-l-[#5b3f46]/30';
-            const borderBottom = r === 8 ? 'border-b-[3px] border-b-neon-pink' : '';
-            const borderRight = c === 8 ? 'border-r-[3px] border-r-neon-pink' : '';
+              // Grid 3x3 box borders matching Playfair template
+              const borderRightClass = c === 8 ? '' : (c === 2 || c === 5 ? 'border-r-[1.8px] border-r-brown-light' : 'border-r border-r-brown-light/18');
+              const borderBottomClass = r === 8 ? '' : (r === 2 || r === 5 ? 'border-b-[1.8px] border-b-brown-light' : 'border-b border-b-brown-light/18');
 
-            // Compute cell state highlights
-            let bgStyle = 'bg-[#15121a]';
-            if (isSelected) {
-              bgStyle = 'bg-[#ff4a8e]/20';
-            } else if (hasSameValue) {
-              bgStyle = 'bg-[#00dbe9]/20';
-            } else if (peer) {
-              bgStyle = 'bg-[#ff4a8e]/5';
-            }
+              // Background highlight styling
+              let bgStyle = 'bg-[#fffcf8]/55';
+              if (isSelected) {
+                bgStyle = 'bg-sky/38';
+              } else if (hasSameValue) {
+                bgStyle = 'bg-sky/15';
+              } else if (peer) {
+                bgStyle = 'bg-sky/8';
+              }
 
-            // Cell text colors
-            let textStyle = 'text-white';
-            const isCompleted = cell && cell.value !== 0 && completedNumbers.includes(cell.value) && !cell.isError;
+              // Text Color logic based on status
+              let textStyle = 'text-brown-mid';
+              const isCompleted = cell && cell.value !== 0 && completedNumbers.includes(cell.value) && !cell.isError;
 
-            if (cell?.isRevealed) {
-              textStyle = 'text-[#00a2ff] font-extrabold font-sora';
-            } else if (isCompleted) {
-              textStyle = 'text-neon-green font-extrabold font-sora';
-            } else if (cell?.isInitial) {
-              textStyle = 'text-white font-bold font-sora';
-            } else if (cell?.isError) {
-              textStyle = 'text-red-400 font-bold animate-pulse';
-            } else {
-              textStyle = 'text-neon-cyan font-semibold';
-            }
+              if (cell?.isRevealed) {
+                // revealed solution turns sky-blue/blue
+                textStyle = 'text-sky-text font-extrabold font-display italic';
+              } else if (isCompleted) {
+                textStyle = 'text-sky-mid font-extrabold';
+              } else if (cell?.isInitial) {
+                textStyle = 'text-brown-deep font-bold';
+              } else if (cell?.isError) {
+                textStyle = 'text-terracotta font-bold animate-pulse';
+              } else {
+                textStyle = 'text-brown-mid font-semibold';
+              }
 
-            return (
-              <div
-                id={`cell-${r}-${c}`}
-                key={`${r}-${c}`}
-                onClick={() => onCellSelect(r, c)}
-                className={`
-                  relative aspect-square flex items-center justify-center cursor-pointer transition-all duration-150 group
-                  ${borderTop} ${borderLeft} ${borderBottom} ${borderRight} ${bgStyle}
-                `}
-              >
-                {/* Visual hover guides */}
-                <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors pointer-events-none" />
+              return (
+                <div
+                  id={`cell-${r}-${c}`}
+                  key={`${r}-${c}`}
+                  onClick={() => onCellSelect(r, c)}
+                  className={`
+                    relative aspect-square flex items-center justify-center cursor-pointer transition-colors duration-150 group select-none
+                    ${borderRightClass} ${borderBottomClass} ${bgStyle}
+                    ${cell?.isInitial ? 'given' : 'hover:bg-sky/18'}
+                  `}
+                >
+                  {/* Selected cell outline */}
+                  {isSelected && (
+                    <div className="absolute inset-0 border-2 border-sky-text pointer-events-none" />
+                  )}
 
-                {/* Selected Cell target rings */}
-                {isSelected && (
-                  <div className="absolute inset-0 border-2 border-neon-pink pointer-events-none" />
-                )}
+                  {cell && cell.value !== 0 ? (
+                    <span className={`text-base sm:text-lg md:text-xl ${textStyle}`}>
+                      {cell.value}
+                    </span>
+                  ) : (
+                    /* Render Notes (Pencil Drafts) */
+                    <div className="w-full h-full grid grid-cols-3 grid-rows-3 p-1 text-[9px] leading-none text-brown-mute font-sans font-medium">
+                      {Array.from({ length: 9 }).map((_, noteIdx) => {
+                        const num = noteIdx + 1;
+                        const hasNote = cell?.notes.includes(num);
+                        return (
+                          <div
+                            key={noteIdx}
+                            className="flex items-center justify-center"
+                          >
+                            {hasNote ? num : ''}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                {/* Content Rendering */}
-                {cell && cell.value !== 0 ? (
-                  <span className={`text-base sm:text-lg md:text-xl ${textStyle}`}>
-                    {cell.value}
-                  </span>
-                ) : (
-                  /* Render Notes (Pencil drafts) */
-                  <div className="w-full h-full grid grid-cols-3 grid-rows-3 p-1 text-[9px] leading-none text-neon-muted font-mono font-medium">
-                    {Array.from({ length: 9 }).map((_, noteIdx) => {
-                      const num = noteIdx + 1;
-                      const hasNote = cell?.notes.includes(num);
-                      return (
-                        <div
-                          key={noteIdx}
-                          className="flex items-center justify-center"
-                        >
-                          {hasNote ? num : ''}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Conflict/Mistake red corner flash indicator */}
-                {cell?.isError && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                )}
-              </div>
-            );
-          });
-        })}
-      </div>
+                  {/* Corner error alert */}
+                  {cell?.isError && (
+                    <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-terracotta animate-pulse" />
+                  )}
+                </div>
+              );
+            });
+          })}
+        </div>
       )}
     </div>
   );

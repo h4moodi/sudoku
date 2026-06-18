@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sudoku for kallee ✦</title>
+  <meta name="description" content="i always be there for you, don't be a stranger" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #eee8de;
+      --sand-dark: #e0d6c8;
+      --cream: rgba(255, 252, 248, 0.6);
+      --brown-deep: #2e1f14;
+      --brown-mid: #7a6358;
+      --brown-mute: #9e8a7a;
+      --brown-light: #b09080;
+      --terracotta: #c4836b;
+      --sky: #a8d8ea;
+      --sky-text: #2a7a8a;
+      --sky-mid: #5a9aaa;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--sand);
+      font-family: 'Quicksand', sans-serif;
+      color: var(--brown-deep);
+      overflow-x: hidden;
+    }
+
+    /* ── FALLING FLOWERS ── */
+    #petal-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+    }
+
+    .card {
+      background: rgba(255, 252, 248, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(180, 155, 135, 0.3);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 680px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(46, 31, 20, 0.08);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      padding: 32px 32px 20px;
+      position: relative;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: var(--brown-mute);
+      text-transform: lowercase;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 42px;
+      color: var(--brown-deep);
+      line-height: 1;
+    }
+
+    .title-pre {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 18px;
+      color: var(--brown-mute);
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: var(--brown-light);
+      font-style: italic;
+      margin-top: 10px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── AERO DIFFICULTY STRIP ── */
+    .diff-strip {
+      background: rgba(168, 216, 234, 0.18);
+      border-top: 1px solid rgba(168, 216, 234, 0.35);
+      border-bottom: 1px solid rgba(168, 216, 234, 0.35);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .diff-label {
+      font-size: 10px;
+      color: var(--sky-mid);
+      letter-spacing: 0.1em;
+      margin-right: 4px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.45);
+      border: 0.5px solid rgba(168, 216, 234, 0.6);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      color: var(--sky-text);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .pill.active, .pill:hover {
+      background: rgba(168, 216, 234, 0.38);
+      border-color: rgba(100, 180, 200, 0.7);
+    }
+
+    .puzzle-id {
+      font-size: 10px;
+      color: var(--sky-mid);
+      margin-left: auto;
+      font-style: italic;
+    }
+
+    /* ── MAIN GAME AREA ── */
+    .game-area {
+      padding: 20px 32px;
+      display: grid;
+      grid-template-columns: 1fr 130px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── SUDOKU BOARD ── */
+    .board-wrap {
+      background: rgba(255, 252, 248, 0.5);
+      border-radius: 12px;
+      border: 1px solid rgba(180, 155, 135, 0.2);
+      padding: 10px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      border: 2px solid var(--brown-light);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--brown-mid);
+      background: rgba(255, 252, 248, 0.55);
+      border-right: 0.5px solid rgba(180, 155, 135, 0.18);
+      border-bottom: 0.5px solid rgba(180, 155, 135, 0.18);
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+      position: relative;
+    }
+
+    .cell:hover:not(.given) { background: rgba(168, 216, 234, 0.18); }
+    .cell.selected { background: rgba(168, 216, 234, 0.3) !important; }
+    .cell.highlight { background: rgba(168, 216, 234, 0.1); }
+    .cell.error { color: var(--terracotta) !important; }
+
+    .cell.given {
+      color: var(--brown-deep);
+      font-weight: 700;
+      cursor: default;
+    }
+
+    .cell.heart { color: var(--terracotta); font-size: 13px; cursor: default; }
+
+    .cell.box-r { border-right: 1.5px solid var(--brown-light); }
+    .cell.box-b { border-bottom: 1.5px solid var(--brown-light); }
+
+    .cell input {
+      width: 100%; height: 100%;
+      border: none; background: transparent;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--sky-text);
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: rgba(255, 252, 248, 0.55);
+      border: 1px solid rgba(180, 155, 135, 0.22);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--brown-deep);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 9px;
+      color: var(--brown-mute);
+      letter-spacing: 0.14em;
+      text-transform: lowercase;
+      margin-top: 4px;
+    }
+
+    .msg-card {
+      background: rgba(196, 131, 107, 0.08);
+      border: 1px solid rgba(196, 131, 107, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 11px;
+      color: #7a4e3e;
+      font-style: italic;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .hint-card {
+      background: rgba(168, 216, 234, 0.18);
+      border: 1px solid rgba(168, 216, 234, 0.35);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .hint-card:hover { background: rgba(168, 216, 234, 0.3); }
+
+    .hint-card .stat-val { font-size: 14px; color: var(--sky-text); font-family: 'Quicksand', sans-serif; font-weight: 700; }
+    .hint-card .stat-lbl { color: var(--sky-mid); }
+
+    /* ── NUMPAD ── */
+    .numpad {
+      padding: 0 32px 16px;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 6px;
+    }
+
+    .num-btn {
+      aspect-ratio: 1;
+      background: rgba(255, 252, 248, 0.55);
+      border: 1px solid rgba(180, 155, 135, 0.25);
+      border-radius: 8px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--brown-mid);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .num-btn:hover {
+      background: rgba(168, 216, 234, 0.28);
+      color: var(--sky-text);
+    }
+
+    .num-btn.erase {
+      font-size: 11px;
+      color: var(--brown-light);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 16px 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid rgba(180, 155, 135, 0.15);
+    }
+
+    .btn-primary {
+      background: var(--brown-deep);
+      color: var(--sand);
+      border: none;
+      border-radius: 22px;
+      padding: 10px 22px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--brown-mute);
+      border: 1px solid rgba(180, 155, 135, 0.35);
+      border-radius: 22px;
+      padding: 9px 18px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-ghost:hover { background: rgba(180, 155, 135, 0.1); }
+
+    .footer-dots {
+      display: flex; gap: 5px; margin-left: auto; align-items: center;
+    }
+
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+
+    /* ── WIN OVERLAY ── */
+    .win-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(46, 31, 20, 0.35);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .win-overlay.show { display: flex; }
+
+    .win-card {
+      background: rgba(238, 232, 222, 0.96);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(180, 155, 135, 0.4);
+      border-radius: 20px;
+      padding: 40px 48px;
+      text-align: center;
+      max-width: 340px;
+    }
+
+    .win-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 32px;
+      color: var(--brown-deep);
+      margin-bottom: 8px;
+    }
+
+    .win-sub {
+      font-size: 13px;
+      color: var(--brown-mute);
+      font-style: italic;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 560px) {
+      .game-area {
+        grid-template-columns: 1fr;
+        padding: 16px 16px;
+      }
+
+      .sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .stat-card, .msg-card, .hint-card {
+        flex: 1 1 calc(50% - 5px);
+      }
+
+      .header { padding: 24px 16px 16px; }
+      .diff-strip { padding: 10px 16px; }
+      .numpad { padding: 0 16px 12px; }
+      .footer { padding: 14px 16px 20px; }
+      .title { font-size: 34px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="petal-canvas"></canvas>
+
+<div class="page">
+  <div class="card">
+
+    <div class="header">
+      <div class="eyebrow">made just for you ✦</div>
+      <div class="title">
+        <span class="title-pre">sudoku for</span>
+        kallee
+      </div>
+      <div class="tagline">i always be there for you, don't be a stranger ♡</div>
+    </div>
+
+    <div class="diff-strip">
+      <span class="diff-label">difficulty</span>
+      <button class="pill active" onclick="setDiff(this,'easy')">easy</button>
+      <button class="pill" onclick="setDiff(this,'medium')">medium</button>
+      <button class="pill" onclick="setDiff(this,'hard')">hard</button>
+      <span class="puzzle-id">puzzle #42 ✦ today's pick</span>
+    </div>
+
+    <div class="game-area">
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="sidebar">
+        <div class="stat-card">
+          <div class="stat-val" id="timer">00:00</div>
+          <div class="stat-lbl">elapsed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="mistakes">0</div>
+          <div class="stat-lbl">mistakes</div>
+        </div>
+        <div class="msg-card">fill in the blanks, darling ♡</div>
+        <div class="hint-card" onclick="useHint()">
+          <div class="stat-val">hint</div>
+          <div class="stat-lbl">tap when stuck</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="numpad" id="numpad"></div>
+
+    <div class="footer">
+      <button class="btn-primary" onclick="newPuzzle()">new puzzle</button>
+      <button class="btn-ghost" onclick="showHow()">how to play</button>
+      <div class="footer-dots">
+        <div class="dot" style="background:#c4836b;"></div>
+        <div class="dot" style="background:#a8d8ea;"></div>
+        <div class="dot" style="background:#b09080;opacity:0.35;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="win-overlay" id="winOverlay">
+  <div class="win-card">
+    <div class="win-title">you did it ♡</div>
+    <div class="win-sub">kallee, you're brilliant.<br>i knew you'd figure it out.</div>
+    <button class="btn-primary" onclick="newPuzzle(); document.getElementById('winOverlay').classList.remove('show')">play again</button>
+  </div>
+</div>
+
+<script>
+const PUZZLES = {
+  easy: {
+    puzzle: [
+      5,3,0, 0,7,0, 0,0,0,
+      6,0,0, 1,9,5, 0,0,0,
+      0,9,8, 0,0,0, 0,6,0,
+      8,0,0, 0,6,0, 0,0,3,
+      4,0,0, 8,0,3, 0,0,1,
+      7,0,0, 0,2,0, 0,0,6,
+      0,6,0, 0,0,0, 2,8,0,
+      0,0,0, 4,1,9, 0,0,5,
+      0,0,0, 0,8,0, 0,7,9
+    ],
+    solution: [
+      5,3,4, 6,7,8, 9,1,2,
+      6,7,2, 1,9,5, 3,4,8,
+      1,9,8, 3,4,2, 5,6,7,
+      8,5,9, 7,6,1, 4,2,3,
+      4,2,6, 8,5,3, 7,9,1,
+      7,1,3, 9,2,4, 8,5,6,
+      9,6,1, 5,3,7, 2,8,4,
+      2,8,7, 4,1,9, 6,3,5,
+      3,4,5, 2,8,6, 1,7,9
+    ]
+  }
+};
+
+let state = {
+  puzzle: [], solution: [], userGrid: [],
+  selected: null, mistakes: 0,
+  timerInterval: null, seconds: 0,
+  diff: 'easy'
+};
+
+function setDiff(el, diff) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  state.diff = diff;
+  newPuzzle();
+}
+
+function newPuzzle() {
+  clearInterval(state.timerInterval);
+  state.seconds = 0; state.mistakes = 0; state.selected = null;
+  const src = PUZZLES[state.diff] || PUZZLES.easy;
+  state.puzzle = [...src.puzzle];
+  state.solution = [...src.solution];
+  state.userGrid = state.puzzle.map(v => v);
+  document.getElementById('mistakes').textContent = '0';
+  updateTimer();
+  state.timerInterval = setInterval(() => { state.seconds++; updateTimer(); }, 1000);
+  renderBoard();
+}
+
+function updateTimer() {
+  const m = String(Math.floor(state.seconds / 60)).padStart(2,'0');
+  const s = String(state.seconds % 60).padStart(2,'0');
+  document.getElementById('timer').textContent = m + ':' + s;
+}
+
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  for (let i = 0; i < 81; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const row = Math.floor(i / 9), col = i % 9;
+    if (col === 2 || col === 5) cell.classList.add('box-r');
+    if (row === 2 || row === 5) cell.classList.add('box-b');
+
+    if (state.puzzle[i] !== 0) {
+      cell.classList.add('given');
+      cell.textContent = state.puzzle[i];
+    } else if (state.userGrid[i] !== 0) {
+      cell.textContent = state.userGrid[i];
+      if (state.userGrid[i] !== state.solution[i]) cell.classList.add('error');
+    } else {
+      cell.textContent = '';
+    }
+
+    cell.addEventListener('click', () => selectCell(i));
+    board.appendChild(cell);
+  }
+  highlightSelected();
+}
+
+function selectCell(idx) {
+  if (state.puzzle[idx] !== 0) return;
+  state.selected = idx;
+  highlightSelected();
+}
+
+function highlightSelected() {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach((c, i) => {
+    c.classList.remove('selected', 'highlight');
+    if (state.selected === null) return;
+    const sr = Math.floor(state.selected / 9), sc = state.selected % 9;
+    const cr = Math.floor(i / 9), cc = i % 9;
+    const sBox = Math.floor(sr/3)*3 + Math.floor(sc/3);
+    const cBox = Math.floor(cr/3)*3 + Math.floor(cc/3);
+    if (i === state.selected) { c.classList.add('selected'); return; }
+    if (cr === sr || cc === sc || sBox === cBox) c.classList.add('highlight');
+  });
+}
+
+function enterNumber(n) {
+  if (state.selected === null) return;
+  const idx = state.selected;
+  if (state.puzzle[idx] !== 0) return;
+  if (n === 0) { state.userGrid[idx] = 0; }
+  else {
+    state.userGrid[idx] = n;
+    if (n !== state.solution[idx]) {
+      state.mistakes++;
+      document.getElementById('mistakes').textContent = state.mistakes;
+    }
+  }
+  renderBoard();
+  checkWin();
+}
+
+function checkWin() {
+  const won = state.userGrid.every((v, i) => v === state.solution[i]);
+  if (won) {
+    clearInterval(state.timerInterval);
+    setTimeout(() => document.getElementById('winOverlay').classList.add('show'), 400);
+  }
+}
+
+function useHint() {
+  if (state.selected === null) {
+    const empties = state.puzzle.map((v,i) => v===0 ? i : -1).filter(i => i>=0);
+    if (!empties.length) return;
+    state.selected = empties[Math.floor(Math.random()*empties.length)];
+  }
+  const idx = state.selected;
+  if (state.puzzle[idx] !== 0) return;
+  state.userGrid[idx] = state.solution[idx];
+  renderBoard();
+  checkWin();
+}
+
+function showHow() {
+  alert('fill each row, column, and 3×3 box with the numbers 1–9.\nno repeats allowed. you got this, kallee ♡');
+}
+
+function buildNumpad() {
+  const np = document.getElementById('numpad');
+  for (let n = 1; n <= 9; n++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = n;
+    btn.addEventListener('click', () => enterNumber(n));
+    np.appendChild(btn);
+  }
+  const erase = document.createElement('button');
+  erase.className = 'num-btn erase';
+  erase.textContent = '✕';
+  erase.addEventListener('click', () => enterNumber(0));
+  np.appendChild(erase);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key >= '1' && e.key <= '9') enterNumber(parseInt(e.key));
+  if (e.key === 'Backspace' || e.key === 'Delete') enterNumber(0);
+  const dirs = { ArrowUp:-9, ArrowDown:9, ArrowLeft:-1, ArrowRight:1 };
+  if (dirs[e.key] !== undefined && state.selected !== null) {
+    const next = state.selected + dirs[e.key];
+    if (next >= 0 && next < 81) { state.selected = next; highlightSelected(); }
+    e.preventDefault();
+  }
+});
+
+buildNumpad();
+newPuzzle();
+
+/* ── FALLING FLOWERS CANVAS ── */
+(function() {
+  const canvas = document.getElementById('petal-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const FLOWERS = ['✿', '❀', '✾', '⚘', '✽'];
+  const COLORS = [
+    'rgba(196,131,107,VAL)',
+    'rgba(168,216,234,VAL)',
+    'rgba(176,144,128,VAL)',
+    'rgba(244,192,122,VAL)',
+    'rgba(135,206,235,VAL)',
+  ];
+
+  const COUNT = 28;
+  const petals = [];
+
+  function makePetal() {
+    return {
+      x: Math.random() * window.innerWidth,
+      y: -30 - Math.random() * 100,
+      size: 12 + Math.random() * 18,
+      speed: 0.5 + Math.random() * 0.9,
+      drift: (Math.random() - 0.5) * 0.6,
+      spin: (Math.random() - 0.5) * 0.03,
+      angle: Math.random() * Math.PI * 2,
+      sway: Math.random() * Math.PI * 2,
+      swaySpeed: 0.008 + Math.random() * 0.012,
+      swayAmp: 20 + Math.random() * 30,
+      char: FLOWERS[Math.floor(Math.random() * FLOWERS.length)],
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      opacity: 0.12 + Math.random() * 0.22,
+    };
+  }
+
+  for (let i = 0; i < COUNT; i++) {
+    const p = makePetal();
+    p.y = Math.random() * window.innerHeight;
+    petals.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (const p of petals) {
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.font = p.size + 'px serif';
+      ctx.fillStyle = p.color.replace('VAL', '1');
+      ctx.translate(p.x + Math.sin(p.sway) * p.swayAmp, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillText(p.char, -p.size / 2, p.size / 2);
+      ctx.restore();
+
+      p.y += p.speed;
+      p.x += p.drift;
+      p.angle += p.spin;
+      p.sway += p.swaySpeed;
+
+      if (p.y > window.innerHeight + 40) {
+        Object.assign(p, makePetal());
+        p.y = -30;
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
+</body>
+</html>

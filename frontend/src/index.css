@@ -1,36 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", sans-serif;
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* Neon Pulse Colors */
-  --color-neon-bg: #15121a;
-  --color-neon-surface: #1e1a23;
-  --color-neon-surface-high: #2c2832;
-  --color-neon-pink: #ff4a8e;
-  --color-neon-pink-glow: #ffb1c5;
-  --color-neon-green: #2ff801;
-  --color-neon-green-glow: #79ff5b;
-  --color-neon-cyan: #00dbe9;
-  --color-neon-purple: #8f0045;
-  --color-neon-text: #e8e0ed;
-  --color-neon-muted: #aa888f;
+  /* Warm Sand Theme Color Tokens */
+  --color-sand: #eee8de;
+  --color-sand-dark: #e0d6c8;
+  --color-cream: rgba(255, 252, 248, 0.55);
+  --color-brown-deep: #2e1f14;
+  --color-brown-mid: #7a6358;
+  --color-brown-mute: #9e8a7a;
+  --color-brown-light: #b09080;
+  --color-terracotta: #c4836b;
+  --color-sky: #a8d8ea;
+  --color-sky-text: #2a7a8a;
+  --color-sky-mid: #5a9aaa;
+
+  /* Map old layout variable tokens to the new palette to minimize TSX modifications */
+  --color-neon-bg: #eee8de;
+  --color-neon-surface: rgba(255, 252, 248, 0.55);
+  --color-neon-surface-high: #e0d6c8;
+  --color-neon-pink: #c4836b;
+  --color-neon-pink-glow: #b09080;
+  --color-neon-green: #5a9aaa;
+  --color-neon-green-glow: #a8d8ea;
+  --color-neon-cyan: #2a7a8a;
+  --color-neon-purple: #2e1f14;
+  --color-neon-text: #2e1f14;
+  --color-neon-muted: #9e8a7a;
 }
 
-/* Animations and extra glows (Glows removed) */
+/* Base Body Styles */
+html, body {
+  min-height: 100%;
+  background: var(--sand);
+  font-family: 'Quicksand', sans-serif;
+  color: var(--brown-deep);
+  overflow-x: hidden;
+}
+
+/* Utilities */
 @utility glow-pink {
-  border-color: #ff4a8e;
+  border-color: var(--terracotta);
 }
 
 @utility glow-green {
-  border-color: #2ff801;
+  border-color: var(--sky-mid);
 }
 
 @utility glow-cyan {
-  border-color: #00dbe9;
+  border-color: var(--sky-text);
 }
 
 /* Fade-in animation used by GameOverlay */
@@ -49,18 +70,18 @@
   animation: fadeIn 0.25s ease-out forwards;
 }
 
-/* Scrollbar styles to match Neon Pulse vibe */
+/* Scrollbar styles to match Cottagecore aesthetic */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #15121a;
+  background: var(--sand);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2c2832;
+  background: var(--brown-light);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff4a8e;
+  background: var(--brown-mid);
 }

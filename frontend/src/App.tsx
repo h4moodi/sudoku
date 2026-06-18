@@ -6,6 +6,7 @@ import SudokuBoard from './components/SudokuBoard';
 import Keypad from './components/Keypad';
 import RankingList from './components/RankingList';
 import GameOverlay from './components/GameOverlay';
+import PetalCanvas from './components/PetalCanvas';
 import { playPlacementSound, playMistakeSound, playVictorySound, playWelcomeSound } from './utils/audio';
 import { supabase } from './utils/supabase';
 
@@ -542,219 +543,183 @@ export default function App() {
   const formattedHund = Math.floor((timeSec % 1) * 100).toString().padStart(2, '0');
 
   return (
-    <div className="min-h-screen bg-[#15121a] text-white flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans overflow-x-hidden">
-      
-      {/* Header Rail */}
-      <header className="w-full max-w-7xl flex items-center justify-between border-b border-white/10 pb-3 sm:pb-5 mb-4 sm:mb-6 gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-base sm:text-xl md:text-2xl font-extrabold font-display tracking-tight text-white flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <span className="text-neon-pink">KALLEE'S</span>
-            <span className="text-white">SUDOKU</span>
-          </span>
-          <span className="hidden md:inline text-neon-pink/40">|</span>
-          <span className="hidden md:inline text-[9px] font-mono tracking-widest text-[#aa888f] uppercase">
-            ARCADE REVOLVER v2.0
-          </span>
-        </div>
+    <div className="min-h-screen relative flex flex-col items-center justify-start p-3 sm:p-6 font-sans overflow-x-hidden selection:bg-sky/40 text-brown-deep">
+      {/* Background Falling Flowers Canvas */}
+      <PetalCanvas />
 
-        {/* Ticking Timer HUD */}
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-          <div className="flex items-center gap-1 sm:gap-2 bg-[#1e1a23] px-2 sm:px-4 py-1.5 rounded-lg border border-neon-pink/30">
-            <span className="text-neon-pink font-semibold text-xs shrink-0 select-none animate-pulse">⏰</span>
-            <span className="font-mono text-xs sm:text-base md:text-lg font-bold tracking-wide sm:tracking-widest text-neon-pink-glow">
-              {formattedMinutes}:{formattedSeconds}.{formattedHund}
-            </span>
-          </div>
-
-          {/* Pause Button */}
-          <button
-            id="btn-pause-header"
-            onClick={togglePause}
-            type="button"
-            className="p-1.5 sm:p-2 rounded-lg bg-[#2c2832] border border-white/10 text-neon-muted hover:text-white transition-all h-8 sm:h-9 flex items-center justify-center cursor-pointer"
-            title="Pause puzzle matrix"
-          >
-            {overlayStatus === 'paused' ? <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current text-neon-green" /> : <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-          </button>
-
-          {/* Hot New Game block */}
-          <button
-            id="btn-newgame-header"
-            onClick={handleNewGame}
-            type="button"
-            className="bg-neon-pink hover:bg-neon-pink-glow text-[#65002f] font-bold text-[10px] sm:text-xs uppercase tracking-wider py-1.5 sm:py-2 px-2 sm:px-4 rounded-lg shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer font-mono whitespace-nowrap"
-          >
-            NEW GAME
-          </button>
-        </div>
-      </header>
-
-      {/* Main Container Workspace layout */}
-      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start flex-1">
+      {/* Main Content Layout */}
+      <div className="relative z-10 w-full max-w-5xl flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 mt-2 sm:mt-6">
         
-        {/* COL 1: SELECT DIFFICULTIES (lg:col-span-3) — horizontal strip on mobile, vertical sidebar on desktop */}
-        <section id="sidebar-difficulty" className="lg:col-span-3 bg-[#1e1a23] rounded-lg border border-white/5 p-3 sm:p-5 order-2 lg:order-none flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2 sm:mb-0">
-              <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-neon-pink-glow">
-                Difficulty
-              </h2>
-              <p className="text-[11px] text-neon-muted lg:hidden">{difficulty.toUpperCase()}</p>
+        {/* Main Sudoku Card */}
+        <div className="bg-cream backdrop-blur-md border border-brown-light/30 rounded-[20px] w-full max-w-[680px] overflow-hidden shadow-[0_8px_40px_rgba(46,31,20,0.08)] flex flex-col">
+          
+          {/* Header */}
+          <header className="p-8 pb-5 max-sm:px-4 max-sm:py-6 relative">
+            <div className="text-[10px] tracking-[0.22em] text-brown-mute uppercase font-bold mb-2">
+              made just for you ✦
             </div>
-            <p className="hidden lg:block text-[11px] text-neon-muted mb-4">SELECT CHALLENGE</p>
+            <h1 className="font-display italic font-bold text-4xl sm:text-5xl text-brown-deep leading-none">
+              <span className="font-sans not-italic font-normal text-lg text-brown-mute block mb-1">
+                sudoku for
+              </span>
+              kallee
+            </h1>
+            <p className="text-xs text-brown-light italic mt-2.5 tracking-wide">
+              i always be there for you, don't be a stranger ♡
+            </p>
+          </header>
 
-            {/* Horizontal on mobile, vertical on desktop */}
-            <nav className="flex flex-row flex-wrap gap-2 mt-2 lg:flex-col lg:space-y-2 lg:gap-0 lg:mt-0 lg:mt-4">
-              {([
-                { id: 'Easy', icon: '❶' },
-                { id: 'Medium', icon: '❷' },
-                { id: 'Hard', icon: '❸' },
-                { id: 'Expert', icon: '❹' },
-                { id: 'Master', icon: '❺' }
-              ] as const).map((d) => {
-                const isActive = difficulty === d.id;
+          {/* Difficulty Strip */}
+          <div className="bg-sky/[0.18] border-y border-sky/35 px-8 py-2.5 max-sm:px-4 flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] text-sky-mid tracking-wider uppercase font-semibold mr-1 select-none">
+              difficulty
+            </span>
+            <div className="flex gap-1.5 flex-wrap">
+              {(['Easy', 'Medium', 'Hard', 'Expert', 'Master'] as Difficulty[]).map((d) => {
+                const isActive = difficulty === d;
                 return (
                   <button
-                    id={`btn-diff-${d.id}`}
-                    key={d.id}
+                    id={`btn-diff-${d}`}
+                    key={d}
                     onClick={() => {
-                      setDifficulty(d.id);
-                      initGame(d.id);
+                      setDifficulty(d);
+                      initGame(d);
                     }}
-                    className={`
-                      flex items-center gap-2 py-2 px-3 lg:w-full lg:justify-between lg:py-3 lg:px-4
-                      rounded-lg font-mono text-xs font-bold tracking-wider transition-all duration-200 border
-                      ${
-                        isActive
-                          ? 'bg-neon-pink text-[#65002f] border-neon-pink'
-                          : 'bg-[#15121a] hover:bg-[#2c2832] text-neon-muted hover:text-white border-white/5'
-                      }
-                    `}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all border cursor-pointer ${
+                      isActive
+                        ? 'bg-sky/38 border-[rgba(100,180,200,0.7)] text-sky-text shadow-sm font-bold'
+                        : 'bg-white/45 border-sky/60 text-sky-text hover:bg-sky/20'
+                    }`}
                   >
-                    <span className="opacity-80">{d.icon}</span>
-                    <span>{d.id.toUpperCase()}</span>
-                    {isActive && (
-                      <span className="hidden lg:inline text-[9px] bg-[#65002f]/15 px-2 py-0.5 rounded text-white animate-pulse">
-                        ACTIVE
-                      </span>
-                    )}
+                    {d.toLowerCase()}
                   </button>
                 );
               })}
-            </nav>
-          </div>
-
-          {/* Rules — only show on desktop where there's space */}
-          <div className="hidden lg:block mt-8 pt-6 border-t border-white/5 space-y-3">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-neon-pink" />
-              <span className="text-[10px] font-mono text-white tracking-widest font-bold">ARCADE PROTOCOLS</span>
             </div>
-            <ul className="text-[10px] text-neon-muted space-y-2 list-none font-sans leading-relaxed">
-              <li>• Every column, row, and 3x3 block must hold numbers <strong className="text-white">1-9</strong>.</li>
-              <li>• Relaxed mode: <strong className="text-neon-pink">Infinite lives</strong> enabled.</li>
-              <li>• Use <strong className="text-neon-cyan">Notes</strong> mode to coordinate drafts on tricky squares.</li>
-              <li>• Keyboard binds enabled (1-9 to input, Arrow keys to navigate!).</li>
-            </ul>
+            <span className="text-[10px] text-sky-mid italic ml-auto max-sm:w-full max-sm:mt-1 max-sm:text-right select-none">
+              puzzle #{difficulty.toLowerCase()} ✦ pick
+            </span>
           </div>
-        </section>
 
-        {/* COL 2: MAIN PLAY ZONE (lg:col-span-6) — first on mobile */}
-        <section id="arena-workbench" className="lg:col-span-6 flex flex-col items-center gap-3 sm:gap-5 order-1 lg:order-none">
-          
-          {/* Header Accuracy Hud bar */}
-          <div className="w-full flex items-center justify-between bg-[#1e1a23] p-2.5 sm:p-4 rounded-lg border border-white/5 font-mono">
+          {/* Game Workbench */}
+          <div className="px-8 py-5 max-sm:px-4 max-sm:py-4 grid grid-cols-1 sm:grid-cols-[1fr_130px] gap-5 items-start">
             
-            {/* Accuracy tracker */}
-            <div className="flex flex-col gap-1 w-2/3">
-              <div className="flex justify-between items-center pr-2">
-                <span className="text-[9px] sm:text-[10px] text-neon-muted font-bold tracking-widest">
-                  ACCURACY
-                </span>
-                <span className="text-xs text-neon-green-glow font-bold">
-                  {accurateRating}%
-                </span>
+            {/* Left side: Board wrap */}
+            <div className="w-full">
+              <div className="relative">
+                <SudokuBoard
+                  cells={cells}
+                  selectedCell={selectedCell}
+                  onCellSelect={handleCellSelect}
+                  highlightNumber={activeNumber}
+                />
+
+                {isBoardSolved && overlayStatus === null && (
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-sand/95 border border-sky-mid/40 rounded-full px-4 py-2.5 flex items-center gap-3 font-sans text-xs shadow-md">
+                    <span className="text-sky-text font-bold tracking-wider">🏆 GRID COMPLETE!</span>
+                    <button
+                      onClick={() => setOverlayStatus('victory')}
+                      className="bg-sky hover:bg-sky/80 text-sky-text font-bold px-3 py-1 rounded-full text-[10px] transition-all whitespace-nowrap cursor-pointer border border-sky-mid/20"
+                    >
+                      REOPEN RESULTS
+                    </button>
+                  </div>
+                )}
+
+                {/* Game Overlay */}
+                <GameOverlay
+                  status={overlayStatus}
+                  difficulty={difficulty}
+                  timeSec={timeSec}
+                  onAction={
+                    overlayStatus === 'welcome'
+                      ? () => setOverlayStatus(null)
+                      : overlayStatus === 'paused'
+                        ? () => setOverlayStatus(null)
+                        : overlayStatus === 'gameover' || overlayStatus === 'victory'
+                          ? handleNewGame
+                          : () => {}
+                  }
+                  onChangeDifficulty={(diff) => {
+                    setDifficulty(diff);
+                    initGame(diff);
+                  }}
+                  onSubmitScore={handleLeaderboardSubmit}
+                  onDismiss={() => setOverlayStatus(null)}
+                />
               </div>
+            </div>
+
+            {/* Right side: Sidebar (Timer, Mistakes, Message, Hint) */}
+            <div className="grid grid-cols-2 gap-2.5 sm:flex sm:flex-col w-full sm:w-[130px]">
               
-              {/* Segmented accuracy bar */}
-              <div className="flex gap-0.5 sm:gap-1 h-2 sm:h-2.5 w-full bg-[#15121a] p-0.5 rounded border border-white/5">
-                {Array.from({ length: 10 }).map((_, i) => {
-                  const segValue = (i + 1) * 10;
-                  const isActive = accurateRating >= segValue;
-                  return (
-                    <div
-                      key={i}
-                      className={`
-                        flex-1 rounded-sm transition-all duration-300
-                        ${
-                          isActive
-                            ? 'bg-[#2ff801]'
-                            : 'bg-white/5'
-                        }
-                      `}
-                    />
-                  );
-                })}
+              {/* Timer */}
+              <div className="bg-[#fffcf8]/55 border border-brown-light/22 rounded-xl p-3 text-center flex flex-col justify-center relative">
+                <div className="flex items-center justify-center gap-1.5">
+                  <span className="font-display text-2xl font-normal text-brown-deep leading-none">
+                    {formattedMinutes}:{formattedSeconds}
+                  </span>
+                  <button
+                    id="btn-pause-sidebar"
+                    onClick={togglePause}
+                    type="button"
+                    className="p-1 rounded-full text-brown-mid hover:text-brown-deep hover:bg-brown-light/10 transition-all cursor-pointer flex items-center justify-center"
+                    title={overlayStatus === 'paused' ? 'Resume' : 'Pause'}
+                  >
+                    {overlayStatus === 'paused' ? (
+                      <Play className="w-3.5 h-3.5 fill-current text-sky-text animate-pulse" />
+                    ) : (
+                      <Pause className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+                <div className="text-[9px] text-brown-mute tracking-widest lowercase mt-1.5 select-none">
+                  elapsed
+                </div>
+              </div>
+
+              {/* Mistakes */}
+              <div className="bg-[#fffcf8]/55 border border-brown-light/22 rounded-xl p-3 text-center flex flex-col justify-center">
+                <span className="font-display text-2xl font-normal text-brown-deep leading-none">
+                  {mistakes}
+                </span>
+                <span className="text-[9px] text-brown-mute tracking-widest lowercase mt-1.5 select-none">
+                  mistakes
+                </span>
+              </div>
+
+              {/* Message Banner */}
+              <div className="bg-terracotta/[0.08] border border-terracotta/20 rounded-xl p-3 text-[11px] text-[#7a4e3e] italic leading-relaxed text-center flex items-center justify-center col-span-2 sm:col-span-1">
+                {isBoardSolved
+                  ? "brilliant work, sweetheart! 🏆"
+                  : mistakes === 0
+                    ? "fill in the blanks, darling ♡"
+                    : mistakes === 1
+                      ? "don't rush, love. take your time. ☕"
+                      : mistakes === 2
+                        ? "breath in, breath out. you got this! 🌸"
+                        : "keep going, beautiful! mistakes are steps to learning. ✨"}
+              </div>
+
+              {/* Hint Card */}
+              <div
+                id="btn-hint-card"
+                onClick={handleGetHint}
+                className="bg-sky/[0.18] border border-sky/35 rounded-xl p-2.5 text-center cursor-pointer hover:bg-sky/30 transition-colors flex flex-col justify-center select-none col-span-2 sm:col-span-1"
+              >
+                <span className="text-xs font-bold text-sky-text uppercase tracking-wide">
+                  need a hint?
+                </span>
+                <span className="text-[9px] text-sky-mid mt-1">
+                  clicks: {hintsUsed}
+                </span>
               </div>
             </div>
 
-            {/* Mistakes tracking */}
-            <div className="text-right flex flex-col justify-center items-end">
-              <span className="text-[9px] sm:text-[10px] text-neon-muted font-bold tracking-widest uppercase mb-1">
-                LIVES
-              </span>
-              <span className="text-xs sm:text-sm tracking-widest font-bold text-neon-cyan animate-pulse">
-                ∞
-              </span>
-            </div>
           </div>
 
-          {/* Puzzle board container area */}
-          <div className="relative w-full">
-            <SudokuBoard
-              cells={cells}
-              selectedCell={selectedCell}
-              onCellSelect={handleCellSelect}
-              highlightNumber={activeNumber}
-            />
-
-            {isBoardSolved && overlayStatus === null && (
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-[#1e1a23]/95 border border-[#2ff801]/40 rounded-full px-4 py-2.5 flex items-center gap-3 font-mono text-[10px] sm:text-xs">
-                <span className="text-[#2ff801] font-bold tracking-wider">🏆 GRID COMPLETE!</span>
-                <button
-                  onClick={() => setOverlayStatus('victory')}
-                  className="bg-[#2ff801] hover:bg-[#79ff5b] text-[#053900] font-bold px-3 py-1 rounded-full text-[9px] sm:text-[10px] transition-all whitespace-nowrap cursor-pointer"
-                >
-                  REOPEN RESULTS
-                </button>
-              </div>
-            )}
-
-            {/* In-Play Overlay State Controller */}
-            <GameOverlay
-              status={overlayStatus}
-              difficulty={difficulty}
-              timeSec={timeSec}
-              onAction={
-                overlayStatus === 'welcome'
-                  ? () => setOverlayStatus(null)
-                  : overlayStatus === 'paused'
-                    ? () => setOverlayStatus(null)
-                    : overlayStatus === 'gameover' || overlayStatus === 'victory'
-                      ? handleNewGame
-                      : () => {}
-              }
-              onChangeDifficulty={(diff) => {
-                setDifficulty(diff);
-                initGame(diff);
-              }}
-              onSubmitScore={handleLeaderboardSubmit}
-              onDismiss={() => setOverlayStatus(null)}
-            />
-          </div>
-
-          {/* Keypad & hint triggers panel */}
-          <div className="w-full mt-2">
+          {/* Keypad */}
+          <div className="px-8 pb-4 max-sm:px-4">
             <Keypad
               activeNumber={activeNumber}
               onNumberSelect={handleNumberSelect}
@@ -767,10 +732,36 @@ export default function App() {
               remainingNumbers={remainingNumbers}
             />
           </div>
-        </section>
 
-        {/* COL 3: LEADERBOARD / HISTORY (lg:col-span-3) */}
-        <section id="sidebar-leaderboard" className="lg:col-span-3 self-stretch flex flex-col order-3 lg:order-none">
+          {/* Footer */}
+          <footer className="px-8 py-4 max-sm:px-4 flex items-center gap-2 border-t border-brown-light/15 flex-wrap">
+            <button
+              id="btn-newgame-footer"
+              onClick={handleNewGame}
+              className="bg-brown-deep text-sand font-bold rounded-full px-5 py-2 hover:opacity-85 transition-opacity text-xs tracking-wider uppercase cursor-pointer"
+            >
+              new puzzle
+            </button>
+            
+            <button
+              id="btn-clear-footer"
+              onClick={handleClearAll}
+              className="bg-transparent text-brown-mute border border-brown-light/35 hover:bg-brown-light/10 font-medium rounded-full px-4.5 py-1.5 transition-colors text-xs tracking-wide cursor-pointer"
+            >
+              clear board
+            </button>
+
+            <div className="flex gap-1.5 ml-auto items-center select-none">
+              <div className="w-2.5 h-2.5 rounded-full bg-terracotta" />
+              <div className="w-2.5 h-2.5 rounded-full bg-sky" />
+              <div className="w-2.5 h-2.5 rounded-full bg-brown-light/35" />
+            </div>
+          </footer>
+
+        </div>
+
+        {/* Sidebar Scoreboard / Leaderboard (Local and Global tabs) */}
+        <div className="w-full max-w-[680px] lg:max-w-none lg:w-[320px] shrink-0">
           <RankingList
             currentDifficulty={difficulty}
             userRuns={userRuns}
@@ -778,13 +769,9 @@ export default function App() {
             isLoading={isLoadingLeaderboard}
             onClearHistory={() => setUserRuns([])}
           />
-        </section>
-      </main>
+        </div>
 
-      {/* Decorative Arcade footer info */}
-      <footer className="mt-12 text-center text-neon-muted text-[10px] uppercase tracking-widest font-mono">
-        <p>COSMIC SLATE THEME • POWERED BY ANTIGRAVITY ENGINE</p>
-      </footer>
+      </div>
     </div>
   );
 }
