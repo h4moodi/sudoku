@@ -548,7 +548,7 @@ export default function App() {
       <header className="w-full max-w-7xl flex items-center justify-between border-b border-white/10 pb-3 sm:pb-5 mb-4 sm:mb-6 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-base sm:text-xl md:text-2xl font-extrabold font-display tracking-tight text-white flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <span className="text-neon-pink">KALLE'S</span>
+            <span className="text-neon-pink">KALLEE'S</span>
             <span className="text-white">SUDOKU</span>
           </span>
           <span className="hidden md:inline text-neon-pink/40">|</span>
