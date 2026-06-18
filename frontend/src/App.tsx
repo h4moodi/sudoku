@@ -691,9 +691,9 @@ export default function App() {
               {/* Message Banner */}
               <div className="bg-terracotta/[0.08] border border-terracotta/20 rounded-xl p-3 text-[11px] text-[#7a4e3e] italic leading-relaxed text-center flex items-center justify-center col-span-2 sm:col-span-1">
                 {isBoardSolved
-                  ? "brilliant work, sweetheart! 🏆"
+                  ? "see i knew you were smart as hell"
                   : mistakes === 0
-                    ? "fill in the blanks, darling ♡"
+                    ? "fill in the blanks, ♡"
                     : mistakes === 1
                       ? "don't rush, love. take your time. ☕"
                       : mistakes === 2

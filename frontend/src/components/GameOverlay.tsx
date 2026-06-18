@@ -157,7 +157,7 @@ export default function GameOverlay({
               you did it ♡
             </h2>
             <p className="text-xs text-brown-mute italic leading-relaxed max-w-xs mx-auto">
-              kallee, you're brilliant.<br />i knew you'd figure it out.
+              see i knew you were smart as hell
             </p>
 
             <div className="bg-[#fffcf8]/55 py-2.5 px-3 sm:py-3 sm:px-4 rounded-lg border border-brown-light/20 space-y-1.5">
@@ -172,48 +172,6 @@ export default function GameOverlay({
                 </span>
               </div>
             </div>
-
-            {/* Leaderboard submission */}
-            {onSubmitScore && !submitted && (
-              <form
-                id="leaderboard-submit-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (userName.trim()) {
-                    onSubmitScore(userName.trim());
-                    setSubmitted(true);
-                  }
-                }}
-                className="bg-[#fffcf8]/55 p-3 rounded-lg border border-brown-light/25 space-y-2"
-              >
-                <label className="block text-[10px] text-brown-mute font-sans font-bold uppercase tracking-wider text-left">
-                  BEAT THE RECORD! ENTER NAME:
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    maxLength={16}
-                    placeholder="CYBER_SOLVER_9"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value.toUpperCase())}
-                    className="flex-1 min-w-0 bg-[#fffcf8]/80 border border-brown-light/20 text-brown-deep font-mono text-xs px-2.5 py-1.5 rounded focus:outline-none focus:border-sky-text"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="shrink-0 bg-brown-deep text-sand text-xs font-bold px-3 py-1 rounded hover:bg-brown-mid font-sans transition-all cursor-pointer"
-                  >
-                    SUBMIT
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {submitted && (
-              <div className="text-[11px] text-sky-text bg-sky/15 p-2 rounded border border-sky-mid/20 font-mono">
-                ✓ Recorded on public node list! Let's check the ranks!
-              </div>
-            )}
 
             <div className="flex flex-col sm:flex-row gap-2 w-full pt-2">
               {onDismiss && (
